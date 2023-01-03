@@ -1,13 +1,33 @@
 package GUI;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 
 public class JFrameGarage extends JFrame
 {
     private JPanel mainPanel;
+    private JButton nouveauContratButton;
+    private JButton supprimerContratButton;
+    private JButton visualiserVoitureButton;
+    private JTable tableContrats;
+    private JScrollPane jScrollPaneEmployes;
+    private JScrollPane jScrollPaneClients;
+    private JLabel labelImage;
+    private JComboBox comboBoxModelesDisponibles;
+    private JButton buttonChoisirModele;
+    private JComboBox comboBoxOptionsDisponibles;
+    private JButton buttonChoisirOption;
+    private JScrollPane jScrollPaneOptionsChoisies;
+    private JTable tableOptionsChoisies;
+
+    private JTable tableEmployes;
+
+    private JTable tableClients;
 
     public JFrameGarage()
     {
@@ -32,6 +52,42 @@ public class JFrameGarage extends JFrame
         menuConnexion.addSeparator();
         JMenuItem menuItemQuitter = new JMenuItem("Quitter");
         menuConnexion.add(menuItemQuitter);
+
+        // Table des employes
+        Object[][] data = {
+                {new Integer(1), "Wagner","Jean-Marc","Vendeur"},
+                {new Integer(2), "Charlet","Christophe","Administratif"}
+        };
+        String[] nomsColonnes = { "Num", "Nom", "Prénom", "Fonction"};
+        tableEmployes = new JTable(data, nomsColonnes);
+        int[] taillesColonnes = {30,60,60,60};
+        TableColumn col = null;
+        for (int i=0; i<taillesColonnes.length; i++)
+        {
+            col = tableEmployes.getColumnModel().getColumn(i);
+            col.setPreferredWidth(taillesColonnes[i]);
+        }
+        jScrollPaneEmployes.setViewportView(tableEmployes);
+
+        // Table des clients
+        tableClients = new JTable();
+        DefaultTableModel tableModel = (DefaultTableModel) tableClients.getModel();
+        String[] nomsColonnes2 = { "Num", "Nom", "Prénom", "GSM"};
+        tableModel.setColumnIdentifiers(nomsColonnes2);
+        Vector ligne = new Vector();
+        ligne.add(new Integer(1));
+        ligne.add("Wagner");
+        ligne.add("Jean-Marc");
+        ligne.add("0478/75.53.36");
+        tableModel.addRow(ligne);
+        //tableClients.setModel(tableModel);
+        jScrollPaneClients.setViewportView(tableClients);
+
+        // Table des contrats
+        tableModel = (DefaultTableModel) tableContrats.getModel();
+        String[] nomsColonnes3 = { "Num", "Vendeur", "Client", "Voiture"};
+        tableModel.setColumnIdentifiers(nomsColonnes3);
+
 
         menuItemQuitter.addActionListener(new ActionListener() {
             @Override
