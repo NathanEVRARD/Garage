@@ -1,8 +1,11 @@
 package GUI;
 
+import Garage.Modele;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.ButtonGroup;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +27,20 @@ public class JFrameGarage extends JFrame
     private JButton buttonChoisirOption;
     private JScrollPane jScrollPaneOptionsChoisies;
     private JTable tableOptionsChoisies;
+    private JTextField textFieldNomProjet;
+    private JTextField textFieldModele;
+    private JTextField textFieldPuissance;
+    private JTextField textFieldPrixDeBase;
+    private JRadioButton radioButtonEssence;
+    private JRadioButton radioButtonDiesel;
+    private JRadioButton radioButtonElectrique;
+    private JRadioButton radioButtonHybride;
+    private JButton buttonSupprimerOption;
+    private JButton buttonAccorderReduction;
+    private JTextField textFieldPrixAvecOptions;
+    private JButton buttonNouveauProjet;
+    private JButton buttonOuvrirProjet;
+    private JButton buttonEnregistrerProjet;
 
     private JTable tableEmployes;
 
@@ -36,6 +53,13 @@ public class JFrameGarage extends JFrame
         setContentPane(mainPanel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+
+        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(radioButtonDiesel);
+        buttonGroup.add(radioButtonElectrique);
+        buttonGroup.add(radioButtonEssence);
+        buttonGroup.add(radioButtonHybride);
+        radioButtonEssence.setSelected(true);
 
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
@@ -52,6 +76,35 @@ public class JFrameGarage extends JFrame
         menuConnexion.addSeparator();
         JMenuItem menuItemQuitter = new JMenuItem("Quitter");
         menuConnexion.add(menuItemQuitter);
+
+        JMenu menuEmployes = new JMenu("Employés");
+        menuBar.add(menuEmployes);
+        JMenu menuClients = new JMenu("Clients");
+        menuBar.add(menuClients);
+        JMenu menuVoiture = new JMenu("Voiture");
+        menuBar.add(menuVoiture);
+        JMenuItem menuItemNouveauModele = new JMenuItem("Nouveau modèle");
+        menuVoiture.add(menuItemNouveauModele);
+        JMenuItem menuItemNouvelleOption = new JMenuItem("Nouvelle Option");
+        menuVoiture.add(menuItemNouvelleOption);
+
+        menuItemNouveauModele.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        JDialogNouveauModele dialog = new JDialogNouveauModele();
+                        dialog.pack();
+                        dialog.setVisible(true);
+                        if (dialog.isOk())
+                        {
+                            System.out.println("Choix : " + dialog.getNom() + "-" + dialog.getMoteur() + "-" + dialog.getPuissance() + "-" + dialog.getPrixDeBase());
+                            Modele modele = new Modele(dialog.getNom(),dialog.getPuissance(),dialog.getMoteur(),dialog.getPrixDeBase());
+                            comboBoxModelesDisponibles.addItem(modele);
+                        }
+                        dialog.dispose();
+                    }
+                }
+        );
 
         // Table des employes
         Object[][] data = {
@@ -88,6 +141,10 @@ public class JFrameGarage extends JFrame
         String[] nomsColonnes3 = { "Num", "Vendeur", "Client", "Voiture"};
         tableModel.setColumnIdentifiers(nomsColonnes3);
 
+        // Table des options
+        tableModel = (DefaultTableModel) tableOptionsChoisies.getModel();
+        String[] nomsColonnes4 = { "Code", "Prix", "Intitule"};
+        tableModel.setColumnIdentifiers(nomsColonnes4);
 
         menuItemQuitter.addActionListener(new ActionListener() {
             @Override
