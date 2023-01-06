@@ -1,6 +1,7 @@
 package GUI;
 
 import Garage.Modele;
+import Garage.Option;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -106,6 +107,23 @@ public class JFrameGarage extends JFrame
                 }
         );
 
+        menuItemNouvelleOption.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JDialogNouvelleOption dialog = new JDialogNouvelleOption();
+                dialog.setVisible(true);
+                if (dialog.isOk())
+                {
+                    System.out.println("Code = " + dialog.getCode());
+                    System.out.println("Intitule = " + dialog.getIntitule());
+                    System.out.println("Prix = " + dialog.getPrix());
+                    Option option = new Option(dialog.getCode(),dialog.getIntitule(),dialog.getPrix());
+                    comboBoxOptionsDisponibles.addItem(option);
+                }
+                dialog.dispose();
+            }
+        });
+
         // Table des employes
         Object[][] data = {
                 {new Integer(1), "Wagner","Jean-Marc","Vendeur"},
@@ -163,6 +181,33 @@ public class JFrameGarage extends JFrame
 
         pack();
         setLocation((screen.width - this.getSize().width)/2,(screen.height - this.getSize().height)/2);
+        buttonChoisirModele.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Modele modele = (Modele) comboBoxModelesDisponibles.getSelectedItem();
+                if (modele == null) return;
+                textFieldModele.setText(modele.getNom());
+                textFieldPuissance.setText(String.valueOf(modele.getPuissance()));
+                textFieldPrixDeBase.setText(String.valueOf(modele.getPrixDeBase()));
+                if (modele.getMoteur().equals("Essence")) radioButtonEssence.setSelected(true);
+                if (modele.getMoteur().equals("Diesel")) radioButtonDiesel.setSelected(true);
+                if (modele.getMoteur().equals("Electrique")) radioButtonElectrique.setSelected(true);
+                if (modele.getMoteur().equals("Hybride")) radioButtonHybride.setSelected(true);
+            }
+        });
+        buttonChoisirOption.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Option option = (Option) comboBoxOptionsDisponibles.getSelectedItem();
+                if (option == null) return;
+                DefaultTableModel model = (DefaultTableModel) tableOptionsChoisies.getModel();
+                Vector ligne = new Vector();
+                ligne.add(option.getCode());
+                ligne.add(option.getIntitule());
+                ligne.add(option.getPrix());
+                model.addRow(ligne);
+            }
+        });
     }
 
     public static void main(String[] args) {

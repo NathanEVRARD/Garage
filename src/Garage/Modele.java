@@ -19,4 +19,36 @@ public class Modele
         String s = "" + nom + ", " + puissance + "ch, " + moteur + ", " + prixDeBase;
         return s;
     }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public int getPuissance() {
+        return puissance;
+    }
+
+    public void setPuissance(int puissance) {
+        this.puissance = puissance;
+    }
+
+    public String getMoteur() {
+        return moteur;
+    }
+
+    public void setMoteur(String moteur) {
+        this.moteur = moteur;
+    }
+
+    public float getPrixDeBase() {
+        return prixDeBase;
+    }
+
+    public void setPrixDeBase(float prixDeBase) {
+        this.prixDeBase = prixDeBase;
+    }
 }
