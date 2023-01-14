@@ -2,6 +2,8 @@ package GUI;
 
 import Garage.Modele;
 import Garage.Option;
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -211,6 +213,8 @@ public class JFrameGarage extends JFrame
     }
 
     public static void main(String[] args) {
+        //FlatLightLaf.setup();
+        FlatDarculaLaf.setup();
         JFrameGarage frame = new JFrameGarage();
         frame.setVisible(true);
     }
