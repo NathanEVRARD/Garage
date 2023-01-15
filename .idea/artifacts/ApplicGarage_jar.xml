@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ApplicGarage:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ApplicGarage_jar</output-path>
+    <root id="archive" name="ApplicGarage.jar">
+      <element id="module-output" name="ApplicGarage" />
+      <element id="extracted-dir" path="$USER_HOME$/OneDrive/Documents/Année académique 2022-2023/Labo Java/flatlaf-3.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

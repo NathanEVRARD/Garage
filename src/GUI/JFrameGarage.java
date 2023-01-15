@@ -3,7 +3,6 @@ package GUI;
 import Garage.Modele;
 import Garage.Option;
 import com.formdev.flatlaf.FlatDarculaLaf;
-import com.formdev.flatlaf.FlatLightLaf;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -127,9 +126,9 @@ public class JFrameGarage extends JFrame
         });
 
         // Table des employes
-        Object[][] data = {
-                {new Integer(1), "Wagner","Jean-Marc","Vendeur"},
-                {new Integer(2), "Charlet","Christophe","Administratif"}
+        Object[][] data = new Object[][]{
+                {Integer.valueOf(1), "Wagner", "Jean-Marc", "Vendeur"},
+                {Integer.valueOf(2), "Charlet", "Christophe", "Administratif"}
         };
         String[] nomsColonnes = { "Num", "Nom", "Prénom", "Fonction"};
         tableEmployes = new JTable(data, nomsColonnes);
@@ -148,7 +147,7 @@ public class JFrameGarage extends JFrame
         String[] nomsColonnes2 = { "Num", "Nom", "Prénom", "GSM"};
         tableModel.setColumnIdentifiers(nomsColonnes2);
         Vector ligne = new Vector();
-        ligne.add(new Integer(1));
+        ligne.add(Integer.valueOf(1));
         ligne.add("Wagner");
         ligne.add("Jean-Marc");
         ligne.add("0478/75.53.36");
