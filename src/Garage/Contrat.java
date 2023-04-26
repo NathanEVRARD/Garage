@@ -1,5 +1,9 @@
 package Garage;
 
+import javax.imageio.IIOException;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class Contrat implements IEstIdentifiable
 {
     private static int Inumero = 1;
@@ -60,5 +64,25 @@ public class Contrat implements IEstIdentifiable
     public String toString()
     {
         return getNom() + ";" + getClientRef().getNumero() + ";" + getEmployeRef().getNumero();
+    }
+
+    public boolean equals(Contrat c)
+    {
+        if(c.getEmployeRef() == this.getEmployeRef() && c.getClientRef() == this.getClientRef() && c.getNom() == this.getNom() && c.getNumero() == this.getNumero())
+            return true;
+        else
+            return false;
+    }
+
+    public void Save(FileWriter writer)
+    {
+        try
+        {
+            writer.write(this.toString() + "\n");
+        }
+        catch(IOException e)
+        {
+            System.out.print(e.getMessage());
+        }
     }
 }

@@ -42,4 +42,12 @@ public class Personne
     {
         return nom + ";" + prenom;
     }
+
+    public boolean equals(Personne p)
+    {
+        if(p.getPrenom() == this.getPrenom() && p.getNom() == this.getNom())
+            return true;
+        else
+            return false;
+    }
 }

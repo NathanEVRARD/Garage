@@ -1,4 +1,8 @@
 package Garage;
+
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class Employe extends Intervenant implements IEstIdentifiable
 {
     private String login;
@@ -47,5 +51,24 @@ public class Employe extends Intervenant implements IEstIdentifiable
     public String toString()
     {
         return super.toString() + ";" + getNumero() + ";" + getFonction();
+    }
+
+    public boolean equals(Employe e) {
+        if (super.equals(e) && e.getLogin() == this.getLogin() && e.getMdp() == this.getMdp() && e.getFonction() == this.getFonction())
+            return true;
+        else
+            return false;
+    }
+
+    public void Save(FileWriter writer)
+    {
+        try
+        {
+            writer.write(this.toString() + "\n");
+        }
+        catch(IOException e)
+        {
+            System.out.print(e.getMessage());
+        }
     }
 }

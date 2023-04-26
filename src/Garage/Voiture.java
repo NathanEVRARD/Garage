@@ -1,4 +1,7 @@
 package Garage;
+
+import java.io.FileWriter;
+import java.io.IOException;
 public class Voiture {
     private String nomProjet;
     private Modele modele;
@@ -21,6 +24,16 @@ public class Voiture {
         this.modele = m;
     }
 
+    public String getNom()
+    {
+        return this.nomProjet;
+    }
+
+    public Modele getModele()
+    {
+        return this.modele;
+    }
+
     @Override
     public String toString()
     {
@@ -33,6 +46,13 @@ public class Voiture {
                 s += "(" + options[i].toString() + ")\n";
         }
         return s;
+    }
+    public boolean equals(Voiture v)
+    {
+        if(v.getNom() == this.getNom() && v.getModele().equals(this.getModele()))
+            return true;
+        else
+            return false;
     }
 
     public void ajouteOption(Option op)
@@ -47,5 +67,18 @@ public class Voiture {
     {
         if(i-1 >= 0 && i-1 <= 4 && options[i-1] != null)
             options[i-1] = null;
+    }
+
+    public void Save()
+    {
+        try
+        {
+            FileWriter writer = new FileWriter("C:\\Users\\natha\\Documents\\Mes Cours\\B2\\Q2\\Labo\\Java\\ApplicGarage\\CSV");
+        }
+        catch (IOException e)
+        {
+            // Print the exception
+            System.out.print(e.getMessage());
+        }
     }
 }

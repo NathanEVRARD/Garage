@@ -21,4 +21,12 @@ public abstract class Intervenant extends Personne implements IEstIdentifiable
     {
         return super.toString() + ";" + getNumero();
     }
+
+    public boolean equals(Intervenant i)
+    {
+        if(i.getNumero() == this.getNumero() && super.equals(i))
+            return true;
+        else
+            return false;
+    }
 }

@@ -1,5 +1,8 @@
 package Garage;
 
+import java.io.IOException;
+import java.io.FileWriter;
+
 public class Option
 {
     private String code;
@@ -39,5 +42,17 @@ public class Option
     @Override
     public String toString() {
         return code + ";" + intitule + ";" + prix;
+    }
+
+    public void Save(FileWriter writer)
+    {
+        try
+        {
+            writer.write(this.toString() + "\n");
+        }
+        catch(IOException e)
+        {
+            System.out.print(e.getMessage());
+        }
     }
 }

@@ -1,5 +1,8 @@
 package Garage;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class Client extends Intervenant
 {
     private String gsm;
@@ -24,5 +27,17 @@ public class Client extends Intervenant
     public String toString()
     {
         return super.toString() + ";" + getGsm();
+    }
+
+    public void Save(FileWriter writer)
+    {
+        try
+        {
+            writer.write(this.toString() + "\n");
+        }
+        catch(IOException e)
+        {
+            System.out.print(e.getMessage());
+        }
     }
 }

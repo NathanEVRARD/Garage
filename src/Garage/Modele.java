@@ -1,5 +1,7 @@
 package Garage;
 
+import java.io.FileWriter;
+import java.io.IOException;
 public class Modele
 {
     public Modele(String nom, int puissance, String moteur, float prixDeBase) {
@@ -16,8 +18,7 @@ public class Modele
 
     @Override
     public String toString() {
-        String s = "" + nom + ", " + puissance + "ch, " + moteur + ", " + prixDeBase;
-        return s;
+        return nom + ";" + puissance + ";" + moteur + ";" + prixDeBase;
     }
 
     public String getNom() {
@@ -50,5 +51,25 @@ public class Modele
 
     public void setPrixDeBase(float prixDeBase) {
         this.prixDeBase = prixDeBase;
+    }
+
+    public boolean equals(Modele m)
+    {
+        if(m.getNom() == this.getNom() && m.getMoteur() == this.getMoteur() && m.getPuissance() == this.getPuissance() && m.getPrixDeBase() == this.getPrixDeBase())
+            return true;
+        else
+            return false;
+    }
+
+    public void Save(FileWriter writer)
+    {
+        try
+        {
+            writer.write(this.toString() + "\n");
+        }
+        catch(IOException e)
+        {
+            System.out.print(e.getMessage());
+        }
     }
 }
