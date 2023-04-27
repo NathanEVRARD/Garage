@@ -79,6 +79,8 @@ public class Garage
             FileWriter clientsWriter = new FileWriter(clientsPath);
             FileWriter employesWriter = new FileWriter(employesPath);
 
+            contratsWriter.write(Contrat.getInumero() + "\n");
+
             modeles.forEach(modele -> modele.Save(modelesWriter));
             options.forEach(option -> option.Save(optionsWriter));
             contrats.forEach(contrat -> contrat.Save(contratsWriter));
@@ -170,6 +172,8 @@ public class Garage
     {
         File fileContrats = new File("CSV\\contrats.csv");
         Scanner scContrats = new Scanner(fileContrats);
+        int Inumero = Integer.parseInt(scContrats.nextLine());
+        Contrat.setInumero(Inumero);
         scContrats.useDelimiter(";|\n");
 
         while(scContrats.hasNext())

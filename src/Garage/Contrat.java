@@ -76,6 +76,17 @@ public class Contrat implements IEstIdentifiable
         return this.clientRef;
     }
 
+    public static void setInumero(int n)
+    {
+        Inumero = n;
+    }
+
+    public static int getInumero()
+    {
+        return Inumero;
+    }
+
+
     @Override
     public String toString()
     {

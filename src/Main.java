@@ -18,16 +18,16 @@ public class Main {
         Employe colin = new Employe("Hotermans", "Colin", "CocoDéglingo", "TaHayakZbi", "Vendeur");
         Contrat contr = new Contrat("Wesh", c, colin);
 
-//        Garage.getInstance().ajouteModele(m);
-//        Garage.getInstance().ajouteModele(m2);
-//        Garage.getInstance().ajouteOption(op1);
-//        Garage.getInstance().ajouteOption(op2);
-//        Garage.getInstance().ajouteOption(op3);
-//        Garage.getInstance().ajouteClient(c);
-//        Garage.getInstance().ajouteClient(c1);
-//        Garage.getInstance().ajouteEmploye(e);
-//        Garage.getInstance().ajouteEmploye(colin);
-//        Garage.getInstance().ajouteContrat(contr);
+        Garage.getInstance().ajouteModele(m);
+        Garage.getInstance().ajouteModele(m2);
+        Garage.getInstance().ajouteOption(op1);
+        Garage.getInstance().ajouteOption(op2);
+        Garage.getInstance().ajouteOption(op3);
+        Garage.getInstance().ajouteClient(c);
+        Garage.getInstance().ajouteClient(c1);
+        Garage.getInstance().ajouteEmploye(e);
+        Garage.getInstance().ajouteEmploye(colin);
+        Garage.getInstance().ajouteContrat(contr);
 
 //        try
 //        {
@@ -38,7 +38,7 @@ public class Main {
 //            System.out.print(ef.getMessage());
 //        }
 //
-//        Garage.getInstance().Save();
+        Garage.getInstance().Save();
 
         v.ajouteOption(op1);
         v.ajouteOption(op2);
@@ -52,18 +52,18 @@ public class Main {
 //        System.out.println(colin.toString());
 //        System.out.println(contr.toString());
 
-        Garage.getInstance().Load();
+//        Garage.getInstance().Load();
 
-        System.out.println("Clients : ");
-        Garage.getInstance().afficheClients();
-        System.out.println("\nModeles : ");
-        Garage.getInstance().afficheModeles();
-        System.out.println("\nContrats : ");
-        Garage.getInstance().afficheContrats();
-        System.out.println("\nEmployes : ");
-        Garage.getInstance().afficheEmployes();
-        System.out.println("\nOptions : ");
-        Garage.getInstance().afficheOptions();
+//        System.out.println("Clients : ");
+//        Garage.getInstance().afficheClients();
+//        System.out.println("\nModeles : ");
+//        Garage.getInstance().afficheModeles();
+//        System.out.println("\nContrats : ");
+//        Garage.getInstance().afficheContrats();
+//        System.out.println("\nEmployes : ");
+//        Garage.getInstance().afficheEmployes();
+//        System.out.println("\nOptions : ");
+//        Garage.getInstance().afficheOptions();
 
     }
 }

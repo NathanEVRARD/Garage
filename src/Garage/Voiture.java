@@ -73,7 +73,7 @@ public class Voiture {
     {
         try
         {
-            FileWriter writer = new FileWriter("C:\\Users\\natha\\Documents\\Mes Cours\\B2\\Q2\\Labo\\Java\\ApplicGarage\\CSV");
+            FileWriter writer = new FileWriter("CSV\\" + this.getNom() + ".car");
         }
         catch (IOException e)
         {
