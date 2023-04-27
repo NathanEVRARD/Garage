@@ -5,15 +5,26 @@ public abstract class Intervenant extends Personne implements IEstIdentifiable
     private static int Inumero = 1;
     public int numero;
 
-    Intervenant(String n, String p)
+    public Intervenant(String n, String p)
     {
         super(n ,p);
-        this.numero = Inumero++;
+        setNumero(Inumero++);
+    }
+
+    public Intervenant(String n, String p, int i)
+    {
+        super(n, p);
+        setNumero(i);
     }
     @Override
     public int getNumero()
     {
         return this.numero;
+    }
+
+    public void setNumero(int n)
+    {
+        this.numero = n;
     }
 
     @Override

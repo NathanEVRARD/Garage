@@ -44,6 +44,14 @@ public class Option
         return code + ";" + intitule + ";" + prix;
     }
 
+    public boolean equals(Option o)
+    {
+        if(o.getCode() == this.getCode() && o.getIntitule() == this.getIntitule() && o.getPrix() == this.getPrix())
+            return true;
+        else
+            return false;
+    }
+
     public void Save(FileWriter writer)
     {
         try

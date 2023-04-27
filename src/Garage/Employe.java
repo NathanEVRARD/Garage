@@ -17,6 +17,14 @@ public class Employe extends Intervenant implements IEstIdentifiable
         setMdp(m);
     }
 
+    public Employe(String n, String p, String l, String m, String f, int i)
+    {
+        super(n, p, i);
+        setLogin(l);
+        setFonction(f);
+        setMdp(m);
+    }
+
     public void setLogin(String l)
     {
         this.login = l;
@@ -50,7 +58,7 @@ public class Employe extends Intervenant implements IEstIdentifiable
     @Override
     public String toString()
     {
-        return super.toString() + ";" + getNumero() + ";" + getFonction();
+        return super.toString()  + ";" + getLogin() + ";" +getFonction() + ";" + getMdp();
     }
 
     public boolean equals(Employe e) {

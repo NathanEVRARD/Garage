@@ -8,16 +8,32 @@ public class Contrat implements IEstIdentifiable
 {
     private static int Inumero = 1;
     private int numero;
-    private Client clientRef;
-    private Employe employeRef;
+    private int clientRef;
+    private int employeRef;
     private String nom;
 
-    Contrat(String n, Client c, Employe e)
+    public Contrat(String n, Client c, Employe e)
+    {
+        setNom(n);
+        setClientRef(c.getNumero());
+        setEmployeRef(e.getNumero());
+        setNumero(Inumero++);
+    }
+
+    public Contrat(String n, int c, int e)
     {
         setNom(n);
         setClientRef(c);
         setEmployeRef(e);
         setNumero(Inumero++);
+    }
+
+    public Contrat(int i, String n, int c, int e)
+    {
+        setNumero(i);
+        setNom(n);
+        setClientRef(c);
+        setEmployeRef(e);
     }
     @Override
     public int getNumero()
@@ -30,12 +46,12 @@ public class Contrat implements IEstIdentifiable
         this.nom = n;
     }
 
-    public void setClientRef(Client c)
+    public void setClientRef(int c)
     {
         this.clientRef = c;
     }
 
-    public void setEmployeRef(Employe e)
+    public void setEmployeRef(int e)
     {
         this.employeRef = e;
     }
@@ -50,12 +66,12 @@ public class Contrat implements IEstIdentifiable
         return this.nom;
     }
 
-    public Employe getEmployeRef()
+    public int getEmployeRef()
     {
         return this.employeRef;
     }
 
-    public Client getClientRef()
+    public int getClientRef()
     {
         return this.clientRef;
     }
@@ -63,7 +79,7 @@ public class Contrat implements IEstIdentifiable
     @Override
     public String toString()
     {
-        return getNom() + ";" + getClientRef().getNumero() + ";" + getEmployeRef().getNumero();
+        return getNumero() + ";" + getNom() + ";" + getClientRef() + ";" + getEmployeRef();
     }
 
     public boolean equals(Contrat c)
