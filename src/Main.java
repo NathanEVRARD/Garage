@@ -16,7 +16,7 @@ public class Main {
         Client c1 = new Client("Hotermans", "Colin", "0123456789");
         Employe e = new Employe("Hoyoux", "Adrien", "adricarry", "zerdiaq12", "Administratif");
         Employe colin = new Employe("Hotermans", "Colin", "CocoDéglingo", "TaHayakZbi", "Vendeur");
-        Contrat contr = new Contrat("Wesh", c, colin);
+        Contrat contr = new Contrat(c, colin, "coucou");
 
         Garage.getInstance().ajouteModele(m);
         Garage.getInstance().ajouteModele(m2);

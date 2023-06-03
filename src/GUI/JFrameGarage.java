@@ -1,10 +1,6 @@
 package GUI;
 
-import Garage.Garage;
-import Garage.Modele;
-import Garage.Option;
-import Garage.Voiture;
-import Garage.Client;
+import Garage.*;
 import com.formdev.flatlaf.FlatDarculaLaf;
 
 import javax.swing.*;
@@ -239,7 +235,10 @@ public class JFrameGarage extends JFrame
                 if (modele.getMoteur().equals("Diesel")) radioButtonDiesel.setSelected(true);
                 if (modele.getMoteur().equals("Electrique")) radioButtonElectrique.setSelected(true);
                 if (modele.getMoteur().equals("Hybride")) radioButtonHybride.setSelected(true);
-                Garage.getProjetEnCours().setModele(modele);
+                DefaultTableModel model = (DefaultTableModel) tableOptionsChoisies.getModel();
+                model.setRowCount(0);
+                Voiture v = new Voiture("nom", modele);
+                Garage.setProjetEnCours(v);
                 updatePrixAvecOptions();
             }
         });
@@ -302,8 +301,102 @@ public class JFrameGarage extends JFrame
             public void actionPerformed(ActionEvent e){
                 Garage.setProjetEnCours(new Voiture("nom", null));
                 DefaultTableModel model = (DefaultTableModel) tableOptionsChoisies.getModel();
+                model.setRowCount(0);
+                textFieldModele.setText("");
+                textFieldNomProjet.setText(Garage.getProjetEnCours().getNom());
+                textFieldPrixDeBase.setText("");
+                radioButtonEssence.setSelected(true);
             }
         });
+
+        buttonEnregistrerProjet.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try
+                {
+                    Garage.getProjetEnCours().setNom(textFieldNomProjet.getText());
+                    Garage.SaveProjetEnCours();
+                }
+                catch(Exception exc)
+                {
+                    System.out.println(exc.getMessage());
+                }
+            }
+        });
+
+        buttonOuvrirProjet.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try
+                {
+                    Garage.getProjetEnCours().setNom(textFieldNomProjet.getText());
+                    Garage.LoadProjetEnCours();
+                    Voiture v = Garage.getProjetEnCours();
+                    textFieldModele.setText(v.getModele().getNom());
+                    textFieldPrixDeBase.setText(String.valueOf(v.getModele().getPrixDeBase()));
+                    textFieldPuissance.setText(String.valueOf(v.getModele().getPuissance()));
+                    if (v.getModele().getMoteur().equals("Essence")) radioButtonEssence.setSelected(true);
+                    if (v.getModele().getMoteur().equals("Diesel")) radioButtonDiesel.setSelected(true);
+                    if (v.getModele().getMoteur().equals("Electrique")) radioButtonElectrique.setSelected(true);
+                    if (v.getModele().getMoteur().equals("Hybride")) radioButtonHybride.setSelected(true);
+                    DefaultTableModel model = (DefaultTableModel) tableOptionsChoisies.getModel();
+                    model.setRowCount(0);
+                    for(int i = 0; i < 5; i++)
+                    {
+                        Option o = v.getOption(i);
+                        if(o != null) {
+                            Vector ligne = new Vector();
+                            ligne.add(o.getCode());
+                            ligne.add(o.getIntitule());
+                            ligne.add(o.getPrix());
+                            model.addRow(ligne);
+                            updatePrixAvecOptions();
+                        }
+                    }
+                    updatePrixAvecOptions();
+                }
+                catch(Exception exc)
+                {
+                    System.out.println(exc.getMessage());
+                }
+            }
+        });
+
+        nouveauContratButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DefaultTableModel tableContratsModel = (DefaultTableModel) tableContrats.getModel();
+                int indexClient = tableClients.getSelectedRow();
+                int indexEmploye = tableEmployes.getSelectedRow();
+                if(indexClient != -1 && indexEmploye != -1)
+                {
+                    Garage.getProjetEnCours().setNom(textFieldNomProjet.getText());
+                    Contrat c = new Contrat(Garage.getInstance().getClients().get(indexClient), Garage.getInstance().getEmployes().get(indexEmploye), Garage.getProjetEnCours().getNom());
+                    Garage.getInstance().ajouteContrat(c);
+                    Vector ligne = new Vector();
+                    ligne.add(c.getNumero());
+                    ligne.add(c.getClientRef());
+                    ligne.add(c.getEmployeRef());
+                    ligne.add(c.getNom());
+                    tableContratsModel.addRow(ligne);
+                }
+            }
+        });
+
+        supprimerContratButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DefaultTableModel model = (DefaultTableModel) tableEmployes.getModel();
+                Vector ligne = new Vector();
+                Employe emp = new Employe("Evrard", "Nathan", "wesh", "zebi", "cool");
+                ligne.add(emp.getNumero());
+                ligne.add(emp.getNom());
+                ligne.add(emp.getPrenom());
+                ligne.add(emp.getFonction());
+                model.addRow(ligne);
+            }
+        });
+
         Garage.getInstance().ajouteOption(new Option("ABBA", "Vitres teintées", 250));
         comboBoxOptionsDisponibles.addItem(new Option("ABBA", "Vitres teintées", 250));
         Garage.getInstance().ajouteModele(new Modele("Andrew", 100, "Diesel", 3600));
@@ -314,9 +407,6 @@ public class JFrameGarage extends JFrame
     {
         textFieldPrixAvecOptions.setText(String.valueOf(Garage.getProjetEnCours().getPrix()));
     }
-
-
-
     public static void main(String[] args) {
         //FlatLightLaf.setup();
         FlatDarculaLaf.setup();

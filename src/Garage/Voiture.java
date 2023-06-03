@@ -2,7 +2,9 @@ package Garage;
 
 import java.io.FileWriter;
 import java.io.IOException;
-public class Voiture {
+import java.io.Serializable;
+
+public class Voiture implements Serializable {
     private String nomProjet;
     private Modele modele;
 

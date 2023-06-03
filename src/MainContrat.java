@@ -16,9 +16,9 @@ public class MainContrat {
         Employe e3 = new Employe("Hugo", "Donateli","Hugogo","","ADMIN",5);
         Employe e2 = new Employe("Pierre","Menes","Pierre","LOLO111","VENDEUR",11);
 
-        Contrat co = new Contrat(e3.getNom()+c.getNom(),c,e3);
-        Contrat co2 = new Contrat(e2.getNom()+c2.getNom(),c2.getNumero(),e2.getNumero());
-        Contrat co3 = new Contrat(8,e2.getNom()+c2.getNom(),c2.getNumero(),e2.getNumero());
+        Contrat co = new Contrat(c,e3, "coucou");
+        Contrat co2 = new Contrat(c2.getNumero(),e2.getNumero());
+        Contrat co3 = new Contrat(8,c2.getNumero(),e2.getNumero());
 
         /* Test de la fonction ToString() */
         System.out.println(co.toString() + "\n");

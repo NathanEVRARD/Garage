@@ -12,26 +12,24 @@ public class Contrat implements IEstIdentifiable
     private int employeRef;
     private String nom;
 
-    public Contrat(String n, Client c, Employe e)
+    public Contrat(Client c, Employe e, String n)
     {
-        setNom(n);
         setClientRef(c.getNumero());
         setEmployeRef(e.getNumero());
         setNumero(Inumero++);
+        setNom(n);
     }
 
-    public Contrat(String n, int c, int e)
+    public Contrat(int c, int e)
     {
-        setNom(n);
         setClientRef(c);
         setEmployeRef(e);
         setNumero(Inumero++);
     }
 
-    public Contrat(int i, String n, int c, int e)
+    public Contrat(int i, int c, int e)
     {
         setNumero(i);
-        setNom(n);
         setClientRef(c);
         setEmployeRef(e);
     }

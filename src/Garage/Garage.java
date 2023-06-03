@@ -1,13 +1,10 @@
 package Garage;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Vector;
-import java.io.FileWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class Garage
@@ -104,6 +101,31 @@ public class Garage
             System.out.print(e.getMessage());
         }
     }
+    public static void SaveProjetEnCours() throws IOException
+    {
+        String nom = getProjetEnCours().getNom();
+        if(nom == "")
+            return;
+        String extension = ".car";
+        String path = "Data/Projets/" + nom + extension;
+        FileOutputStream fileOut = new FileOutputStream(path);
+        ObjectOutputStream out = new ObjectOutputStream(fileOut);
+        out.writeObject(getProjetEnCours());
+        out.close();
+        fileOut.close();
+    }
+
+    public static void LoadProjetEnCours() throws IOException, ClassNotFoundException
+    {
+        String nom = getProjetEnCours().getNom();
+        String extension = ".car";
+        String path = "Data/Projets/" + nom + extension;
+        FileInputStream fileIn = new FileInputStream(path);
+        ObjectInputStream in = new ObjectInputStream(fileIn);
+        setProjetEnCours((Voiture)in.readObject());
+        in.close();
+        fileIn.close();
+    }
 
     public void Load()
     {
@@ -189,7 +211,7 @@ public class Garage
             int clientRef = Integer.parseInt(scContrats.next());
              int employeRef = Integer.parseInt(scContrats.next());
 
-            Contrat c = new Contrat(num, nom, clientRef, employeRef);
+            Contrat c = new Contrat(num, clientRef, employeRef);
             ajouteContrat(c);
         }
         scContrats.close();
@@ -246,4 +268,6 @@ public class Garage
     {
         return options;
     }
+    public List<Client> getClients(){return clients;}
+    public List<Employe> getEmployes(){return employes;}
 }

@@ -2,8 +2,9 @@ package Garage;
 
 import java.io.IOException;
 import java.io.FileWriter;
+import java.io.Serializable;
 
-public class Option
+public class Option implements Serializable
 {
     private String code;
     private String intitule;
