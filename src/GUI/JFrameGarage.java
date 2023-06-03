@@ -5,12 +5,14 @@ import Garage.Modele;
 import Garage.Option;
 import Garage.Voiture;
 import Garage.Client;
+import Garage.Employe;
 import com.formdev.flatlaf.FlatDarculaLaf;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.ButtonGroup;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -148,6 +150,8 @@ public class JFrameGarage extends JFrame
             }
         });
 
+
+        // Permet d'ajouter un client
         menuItemAjouteClient.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -169,6 +173,130 @@ public class JFrameGarage extends JFrame
                 }
             }
         });
+
+        // Permet de supprimer un client par id
+        menuItemSupprimeClientID.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JDialogSuppressionById dialog = new JDialogSuppressionById();
+                dialog.pack();
+                dialog.setLocationRelativeTo(null);
+                dialog.setVisible(true);
+                boolean ok = false;
+                if(dialog.isOk())
+                {
+                    int id = dialog.getId();
+
+                    DefaultTableModel tableModel = (DefaultTableModel) tableClients.getModel();
+                    // parcour la Jtable
+                    for (int i = 0;i<tableModel.getRowCount();i++)
+                    {
+                        if(tableModel.getValueAt(i,0).equals(id))
+                        {
+                            ok = true;
+                            JDialogConfirmation dialogConfirmation = new JDialogConfirmation("Voulez-vous vraiment supprimer ce client ?");
+                            dialogConfirmation.pack();
+                            dialogConfirmation.setLocationRelativeTo(null);
+                            dialogConfirmation.setVisible(true);
+                            if(dialogConfirmation.isOk())
+                            {
+                                tableModel.removeRow(i);
+                                i = tableModel.getRowCount()+1; // met fin à la boucle
+                                dialogConfirmation.setVisible(false);
+                            }
+                            else
+                            {
+                                dialogConfirmation.setVisible(false);
+                            }
+
+                        }
+
+                    }
+                    if(!ok)
+                    {
+                        JDialogMessage dialogMessage = new JDialogMessage("L'id encodé n'existe pas !");
+                        dialogMessage.pack();
+                        dialogMessage.setLocationRelativeTo(null);
+                        dialogMessage.setVisible(true);
+                    }
+
+                }
+            }
+        });
+
+        // Permet d'ajouter un employe
+        menuItemAjouteEmploye.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JDialogNouvelEmploye dialog = new JDialogNouvelEmploye();
+                dialog.pack();
+                dialog.setLocationRelativeTo(null);
+                dialog.setVisible(true);
+                if(dialog.isOk())
+                {
+                    Employe employe = new Employe(dialog.getNom(), dialog.getPrenom(), dialog.getLogin(), dialog.getMdp(), dialog.getFonction());
+
+                    JTable modelTable = tableEmployes;
+                    Object[] rowData = new Object[]{Integer.valueOf(employe.getNumero()),dialog.getNom(),dialog.getPrenom(),dialog.getFonction()};
+
+                    // code ajout
+
+                    Garage.getInstance().ajouteEmploye(employe);
+                }
+            }
+        });
+
+        // Permet de supprimer un employee par id
+        menuItemSupprimeEmployeID.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JDialogSuppressionById dialog = new JDialogSuppressionById();
+                dialog.pack();
+                dialog.setLocationRelativeTo(null);
+                dialog.setVisible(true);
+                boolean ok = false;
+                if(dialog.isOk())
+                {
+                    int id = dialog.getId();
+
+                    DefaultTableModel tableModel = (DefaultTableModel) tableEmployes.getModel();
+                    // parcour la Jtable
+                    for (int i = 0;i<tableModel.getRowCount();i++)
+                    {
+                        if(tableModel.getValueAt(i,0).equals(id))
+                        {
+                            ok = true;
+                            JDialogConfirmation dialogConfirmation = new JDialogConfirmation("Voulez-vous vraiment supprimer cet employé ?");
+                            dialogConfirmation.pack();
+                            dialogConfirmation.setLocationRelativeTo(null);
+                            dialogConfirmation.setVisible(true);
+                            if(dialogConfirmation.isOk())
+                            {
+                                tableModel.removeRow(i);
+                                i = tableModel.getRowCount()+1; // met fin à la boucle
+                                dialogConfirmation.setVisible(false);
+                            }
+                            else
+                            {
+                                dialogConfirmation.setVisible(false);
+                            }
+
+                        }
+
+                    }
+                    if(!ok)
+                    {
+                        JDialogMessage dialogMessage = new JDialogMessage("L'id encodé n'existe pas !");
+                        dialogMessage.pack();
+                        dialogMessage.setLocationRelativeTo(null);
+                        dialogMessage.setVisible(true);
+                    }
+
+                }
+            }
+        });
+
+
 
         // Table des employes
         Object[][] data = new Object[][]{
