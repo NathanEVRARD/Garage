@@ -1,42 +1,33 @@
 package GUI;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class JDialogNouveauModele extends JDialog
+public class JDialogNouveauClient extends JDialog
 {
     private JPanel contentPane;
     private JButton buttonCreer;
     private JButton buttonAnnuler;
     private JTextField textFieldNom;
-    private JSpinner spinnerPuissance;
-    private JComboBox comboBoxMoteur;
-    private JTextField textFieldPrixDeBase;
+    private JTextField textFieldPrenom;
+    private JTextField textFieldGsm;
 
     private String nom;
-    private int puissance;
-    private String moteur;
-    private float prixDeBase;
+    private String prenom;
+    private String gsm;
     private boolean ok;
 
-    public JDialogNouveauModele()
+    public JDialogNouveauClient()
     {
         super();
         setContentPane(contentPane);
         setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         setModal(true);
-        setTitle("Nouveau Modèle...");
-
-        comboBoxMoteur.addItem("Essence");
-        comboBoxMoteur.addItem("Diesel");
-        comboBoxMoteur.addItem("Hybride");
-        comboBoxMoteur.addItem("Electrique");
-
-        SpinnerModel model = new SpinnerNumberModel(100,30,300,5);
-        spinnerPuissance.setModel(model);
+        setTitle("Nouveau Client...");
 
         buttonAnnuler.addActionListener(new ActionListener() {
             @Override
@@ -49,9 +40,8 @@ public class JDialogNouveauModele extends JDialog
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 nom = textFieldNom.getText();
-                puissance = (int) spinnerPuissance.getValue();
-                moteur = (String) comboBoxMoteur.getSelectedItem();
-                prixDeBase = Float.parseFloat(textFieldPrixDeBase.getText());
+                prenom = textFieldPrenom.getText();
+                gsm = textFieldGsm.getText();
                 ok = true;
                 setVisible(false);
             }
@@ -69,12 +59,13 @@ public class JDialogNouveauModele extends JDialog
     }
 
     public static void main(String[] args) {
-        JDialogNouveauModele dialog = new JDialogNouveauModele();
+        JDialogNouveauClient dialog = new JDialogNouveauClient();
         dialog.pack();
         dialog.setVisible(true);
+
         if (dialog.isOk())
         {
-            System.out.println("Choix : " + dialog.getNom() + "-" + dialog.getMoteur() + "-" + dialog.getPuissance() + "-" + dialog.getPrixDeBase());
+
         }
         dialog.dispose();
     }
@@ -83,16 +74,12 @@ public class JDialogNouveauModele extends JDialog
         return nom;
     }
 
-    public int getPuissance() {
-        return puissance;
+    public String getPrenom() {
+        return prenom;
     }
 
-    public String getMoteur() {
-        return moteur;
-    }
-
-    public float getPrixDeBase() {
-        return prixDeBase;
+    public String getGsm() {
+        return gsm;
     }
 
     public boolean isOk() {

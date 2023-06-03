@@ -3,6 +3,8 @@ package GUI;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class JDialogNouvelleOption extends JDialog
 {
@@ -42,6 +44,16 @@ public class JDialogNouvelleOption extends JDialog
                 prix = Float.parseFloat(textFieldPrix.getText());
                 ok = true;
                 setVisible(false);
+            }
+        });
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                // Perform the action you want when the dialog is closed
+                System.out.println("Dialog is being closed");
+                // You can close the dialog or perform any other action here
+                dispose(); // Close the dialog
             }
         });
     }

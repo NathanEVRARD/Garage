@@ -38,6 +38,12 @@ public class Garage
         return instance;
     }
 
+    private static Voiture projetEnCours = new Voiture("", null);
+
+    public static Voiture getProjetEnCours(){return projetEnCours;}
+
+    public static void setProjetEnCours(Voiture v){projetEnCours = v;}
+
     public void afficheClients()
     {
         clients.forEach(client -> System.out.println(client.toString() + "\n"));
@@ -67,7 +73,7 @@ public class Garage
     {
         try
         {
-            String modelesPath = "CSV\\modeles.csv";
+            String modelesPath = "CSV\\modeles.csv"; // Changer les \\ avec des file separator
             String optionsPath = "CSV\\options.csv";
             String contratsPath = "CSV\\contrats.csv";
             String clientsPath = "CSV\\clients.csv";
@@ -233,5 +239,11 @@ public class Garage
     public void ajouteEmploye(Employe e)
     {
         employes.add(e);
+    }
+
+    public void retireOption(Option o) {options.remove(o);}
+    public Vector<Option> getOptions()
+    {
+        return options;
     }
 }

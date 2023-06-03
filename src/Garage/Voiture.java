@@ -55,18 +55,50 @@ public class Voiture {
             return false;
     }
 
-    public void ajouteOption(Option op)
+    public boolean ajouteOption(Option op)
     {
         int i;
-        for(i = 0; i < 5 && options[i] != null; i++);
-        if(i < 5)
+        for(i = 0; i < 5 && options[i] != null && options[i].getCode() != op.getCode(); i++);
+        if(options[i] == null && i < 5)
+        {
             options[i] = op;
+            return true;
+        }
+        return false;
     }
 
     public void retireOption(int i)
     {
-        if(i-1 >= 0 && i-1 <= 4 && options[i-1] != null)
-            options[i-1] = null;
+        if(i >= 0 && i <= 4 && options[i] != null)
+            options[i] = null;
+    }
+
+    public float getPrix()
+    {
+        float prix = modele.getPrixDeBase();
+        for(int i = 0; i < 5; i++)
+        {
+            if(options[i] != null)
+                prix += options[i].getPrix();
+        }
+        return prix;
+    }
+
+    public Option getOption(int index)
+    {
+        if(options[index] != null)
+            return options[index];
+        else
+            return null;
+    }
+
+    public void afficheOptions()
+    {
+        for(int i = 0; i < 5; i++)
+        {
+            if(options[i] != null)
+                System.out.println(options[i].toString() + " : " + i);
+        }
     }
 
     public void Save()

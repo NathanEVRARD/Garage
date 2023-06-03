@@ -34,7 +34,5 @@ public class MainPersonne {
         System.out.println("Test des setters : affichage la personne modifié : \n");
         System.out.println(p.getNom());
         System.out.println(p.getPrenom());
-
-
     }
 }

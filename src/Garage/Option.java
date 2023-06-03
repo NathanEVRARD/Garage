@@ -39,10 +39,19 @@ public class Option
         this.prix = prix;
     }
 
-    @Override
-    public String toString() {
-        return code + ";" + intitule + ";" + prix;
+    public boolean accorderReduction()
+    {
+        if(prix - 50 < 0)
+            return false;
+        else
+        {
+            prix -= 50;
+            return true;
+        }
     }
+
+    @Override
+    public String toString() { return intitule;}
 
     public boolean equals(Option o)
     {

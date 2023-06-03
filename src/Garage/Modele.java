@@ -18,7 +18,7 @@ public class Modele
 
     @Override
     public String toString() {
-        return nom + ";" + puissance + ";" + moteur + ";" + prixDeBase;
+        return nom;
     }
 
     public String getNom() {

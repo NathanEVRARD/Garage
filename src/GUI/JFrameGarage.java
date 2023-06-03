@@ -1,7 +1,10 @@
 package GUI;
 
+import Garage.Garage;
 import Garage.Modele;
 import Garage.Option;
+import Garage.Voiture;
+import Garage.Client;
 import com.formdev.flatlaf.FlatDarculaLaf;
 
 import javax.swing.*;
@@ -50,7 +53,6 @@ public class JFrameGarage extends JFrame
 
     public JFrameGarage()
     {
-        //setSize(800,600);
         setTitle("Application Garage JAVA");
         setContentPane(mainPanel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -81,8 +83,24 @@ public class JFrameGarage extends JFrame
 
         JMenu menuEmployes = new JMenu("Employés");
         menuBar.add(menuEmployes);
+        JMenuItem menuItemAjouteEmploye = new JMenuItem("Ajouter un employé");
+        menuEmployes.add(menuItemAjouteEmploye);
+        menuEmployes.addSeparator();
+        JMenuItem menuItemSupprimeEmployeID = new JMenuItem("Supprimer un employé par id");
+        menuEmployes.add(menuItemSupprimeEmployeID);
+        JMenuItem menuItemSupprimeEmployeSelec = new JMenuItem("Supprimer un employé par sélection");
+        menuEmployes.add(menuItemSupprimeEmployeSelec);
+
         JMenu menuClients = new JMenu("Clients");
         menuBar.add(menuClients);
+        JMenuItem menuItemAjouteClient = new JMenuItem("Ajouter un client");
+        menuClients.add(menuItemAjouteClient);
+        menuClients.addSeparator();
+        JMenuItem menuItemSupprimeClientID = new JMenuItem("Supprimer un client par id");
+        menuClients.add(menuItemSupprimeClientID);
+        JMenuItem menuItemSupprimeClientSelec = new JMenuItem("Supprimer un client par sélection");
+        menuClients.add(menuItemSupprimeClientSelec);
+
         JMenu menuVoiture = new JMenu("Voiture");
         menuBar.add(menuVoiture);
         JMenuItem menuItemNouveauModele = new JMenuItem("Nouveau modèle");
@@ -96,12 +114,14 @@ public class JFrameGarage extends JFrame
                     public void actionPerformed(ActionEvent e) {
                         JDialogNouveauModele dialog = new JDialogNouveauModele();
                         dialog.pack();
+                        dialog.setLocationRelativeTo(null);
                         dialog.setVisible(true);
                         if (dialog.isOk())
                         {
                             System.out.println("Choix : " + dialog.getNom() + "-" + dialog.getMoteur() + "-" + dialog.getPuissance() + "-" + dialog.getPrixDeBase());
                             Modele modele = new Modele(dialog.getNom(),dialog.getPuissance(),dialog.getMoteur(),dialog.getPrixDeBase());
                             comboBoxModelesDisponibles.addItem(modele);
+                            Garage.getInstance().ajouteModele(modele);
                         }
                         dialog.dispose();
                     }
@@ -112,6 +132,8 @@ public class JFrameGarage extends JFrame
             @Override
             public void actionPerformed(ActionEvent e) {
                 JDialogNouvelleOption dialog = new JDialogNouvelleOption();
+                dialog.pack();
+                dialog.setLocationRelativeTo(null);
                 dialog.setVisible(true);
                 if (dialog.isOk())
                 {
@@ -120,8 +142,31 @@ public class JFrameGarage extends JFrame
                     System.out.println("Prix = " + dialog.getPrix());
                     Option option = new Option(dialog.getCode(),dialog.getIntitule(),dialog.getPrix());
                     comboBoxOptionsDisponibles.addItem(option);
+                    Garage.getInstance().ajouteOption(option);
                 }
                 dialog.dispose();
+            }
+        });
+
+        menuItemAjouteClient.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JDialogNouveauClient dialog = new JDialogNouveauClient();
+                dialog.pack();
+                dialog.setLocationRelativeTo(null);
+                dialog.setVisible(true);
+                if(dialog.isOk())
+                {
+                    Client client = new Client(dialog.getNom(), dialog.getPrenom(), dialog.getGsm());
+                    DefaultTableModel tableModel = (DefaultTableModel) tableClients.getModel();
+                    Vector ligne = new Vector();
+                    ligne.add(Integer.valueOf(client.getNumero()));
+                    ligne.add(dialog.getNom());
+                    ligne.add(dialog.getPrenom());
+                    ligne.add(dialog.getGsm());
+                    tableModel.addRow(ligne);
+                    Garage.getInstance().ajouteClient(client);
+                }
             }
         });
 
@@ -162,7 +207,7 @@ public class JFrameGarage extends JFrame
 
         // Table des options
         tableModel = (DefaultTableModel) tableOptionsChoisies.getModel();
-        String[] nomsColonnes4 = { "Code", "Prix", "Intitule"};
+        String[] nomsColonnes4 = { "Code", "Intitule", "Prix"};
         tableModel.setColumnIdentifiers(nomsColonnes4);
 
         menuItemQuitter.addActionListener(new ActionListener() {
@@ -194,22 +239,83 @@ public class JFrameGarage extends JFrame
                 if (modele.getMoteur().equals("Diesel")) radioButtonDiesel.setSelected(true);
                 if (modele.getMoteur().equals("Electrique")) radioButtonElectrique.setSelected(true);
                 if (modele.getMoteur().equals("Hybride")) radioButtonHybride.setSelected(true);
+                Garage.getProjetEnCours().setModele(modele);
+                updatePrixAvecOptions();
             }
         });
         buttonChoisirOption.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Option option = (Option) comboBoxOptionsDisponibles.getSelectedItem();
-                if (option == null) return;
+                Option o = new Option(option.getCode(), option.getIntitule(), option.getPrix());
+                if (option == null || Garage.getProjetEnCours().getModele() == null) return;
                 DefaultTableModel model = (DefaultTableModel) tableOptionsChoisies.getModel();
-                Vector ligne = new Vector();
-                ligne.add(option.getCode());
-                ligne.add(option.getIntitule());
-                ligne.add(option.getPrix());
-                model.addRow(ligne);
+                if(Garage.getProjetEnCours().ajouteOption(o))
+                {
+                    Vector ligne = new Vector();
+                    ligne.add(o.getCode());
+                    ligne.add(o.getIntitule());
+                    ligne.add(o.getPrix());
+                    model.addRow(ligne);
+                    updatePrixAvecOptions();
+                }
+
             }
         });
+        buttonSupprimerOption.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                int index =  tableOptionsChoisies.getSelectedRow();
+                if(index == -1)
+                    return;
+                Option option = Garage.getInstance().getOptions().get(index);
+                DefaultTableModel model = (DefaultTableModel) tableOptionsChoisies.getModel();
+                Garage.getProjetEnCours().retireOption(index);
+                System.out.println("index : " + index);
+                Garage.getProjetEnCours().afficheOptions();
+                model.removeRow(index);
+                updatePrixAvecOptions();
+            }
+        });
+
+        buttonAccorderReduction.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                int index = tableOptionsChoisies.getSelectedRow();
+                if(index == -1)
+                    return;
+                Option o = Garage.getProjetEnCours().getOption(index);
+                if(o != null)
+                {
+                    o.accorderReduction();
+                    DefaultTableModel model = (DefaultTableModel) tableOptionsChoisies.getModel();
+                    model.getDataVector().get(index).remove(2);
+                    model.getDataVector().get(index).add(o.getPrix());
+                    updatePrixAvecOptions();
+                    tableOptionsChoisies.requestFocus();
+                }
+            }
+        });
+
+        buttonNouveauProjet.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                Garage.setProjetEnCours(new Voiture("nom", null));
+                DefaultTableModel model = (DefaultTableModel) tableOptionsChoisies.getModel();
+            }
+        });
+        Garage.getInstance().ajouteOption(new Option("ABBA", "Vitres teintées", 250));
+        comboBoxOptionsDisponibles.addItem(new Option("ABBA", "Vitres teintées", 250));
+        Garage.getInstance().ajouteModele(new Modele("Andrew", 100, "Diesel", 3600));
+        comboBoxModelesDisponibles.addItem(new Modele("Andrew", 100, "Diesel", 3600));
     }
+
+    private void updatePrixAvecOptions()
+    {
+        textFieldPrixAvecOptions.setText(String.valueOf(Garage.getProjetEnCours().getPrix()));
+    }
+
+
 
     public static void main(String[] args) {
         //FlatLightLaf.setup();
