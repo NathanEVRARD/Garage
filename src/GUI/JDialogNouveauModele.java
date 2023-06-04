@@ -15,11 +15,13 @@ public class JDialogNouveauModele extends JDialog
     private JSpinner spinnerPuissance;
     private JComboBox comboBoxMoteur;
     private JTextField textFieldPrixDeBase;
+    private JTextField textFieldImage;
 
     private String nom;
     private int puissance;
     private String moteur;
     private float prixDeBase;
+    private String image;
     private boolean ok;
 
     public JDialogNouveauModele()
@@ -52,6 +54,7 @@ public class JDialogNouveauModele extends JDialog
                 puissance = (int) spinnerPuissance.getValue();
                 moteur = (String) comboBoxMoteur.getSelectedItem();
                 prixDeBase = Float.parseFloat(textFieldPrixDeBase.getText());
+                image = textFieldImage.getText();
                 ok = true;
                 setVisible(false);
             }
@@ -74,7 +77,7 @@ public class JDialogNouveauModele extends JDialog
         dialog.setVisible(true);
         if (dialog.isOk())
         {
-            System.out.println("Choix : " + dialog.getNom() + "-" + dialog.getMoteur() + "-" + dialog.getPuissance() + "-" + dialog.getPrixDeBase());
+            System.out.println("Choix : " + dialog.getNom() + "-" + dialog.getMoteur() + "-" + dialog.getPuissance() + "-" + dialog.getPrixDeBase() + "-" + dialog.getImage());
         }
         dialog.dispose();
     }
@@ -94,6 +97,7 @@ public class JDialogNouveauModele extends JDialog
     public float getPrixDeBase() {
         return prixDeBase;
     }
+    public String getImage(){return image;}
 
     public boolean isOk() {
         return ok;

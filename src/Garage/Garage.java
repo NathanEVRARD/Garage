@@ -64,35 +64,15 @@ public class Garage
         options.forEach(option -> System.out.println(option.toString()));
     }
 
-    public void Save()
+    public void SaveGarage()
     {
         try
         {
-            String modelesPath = "CSV\\modeles.csv"; // Changer les \\ avec des file separator
-            String optionsPath = "CSV\\options.csv";
-            String contratsPath = "CSV\\contrats.csv";
-            String clientsPath = "CSV\\clients.csv";
-            String employesPath = "CSV\\employes.csv";
-
-            FileWriter modelesWriter = new FileWriter(modelesPath);
-            FileWriter optionsWriter = new FileWriter(optionsPath);
-            FileWriter contratsWriter = new FileWriter(contratsPath);
-            FileWriter clientsWriter = new FileWriter(clientsPath);
-            FileWriter employesWriter = new FileWriter(employesPath);
-
-            contratsWriter.write(Contrat.getInumero() + "\n");
-
-            modeles.forEach(modele -> modele.Save(modelesWriter));
-            options.forEach(option -> option.Save(optionsWriter));
-            contrats.forEach(contrat -> contrat.Save(contratsWriter));
-            clients.forEach(client -> client.Save(clientsWriter));
-            employes.forEach(employe -> employe.Save(employesWriter));
-
-            modelesWriter.close();
-            optionsWriter.close();
-            contratsWriter.close();
-            clientsWriter.close();
-            employesWriter.close();
+            FileOutputStream fileOut = new FileOutputStream("Data" + File.separator + "GarageSerialized" + File.separator + "Garage.gar");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(instance);
+            out.close();
+            fileOut.close();
         }
         catch(IOException e)
         {
@@ -143,7 +123,7 @@ public class Garage
 
     public void LoadClients() throws FileNotFoundException
     {
-        File fileClients = new File("CSV\\clients.csv");
+        File fileClients = new File("CSV" + File.separator +"clients.csv");
         Scanner scClients = new Scanner(fileClients);
         scClients.useDelimiter(";|\n");
         while(scClients.hasNext())
@@ -161,17 +141,19 @@ public class Garage
 
     public void LoadModeles() throws FileNotFoundException
     {
-        File fileModeles = new File("CSV\\modeles.csv");
+        File fileModeles = new File("Data" + File.separator + "CSV" + File.separator + "modeles.csv");
         Scanner scModeles = new Scanner(fileModeles);
         scModeles.useDelimiter(";|\n");
+        scModeles.nextLine();
         while(scModeles.hasNext())
         {
             String nom = scModeles.next();
             int puissance = Integer.parseInt(scModeles.next());
             String moteur = scModeles.next();
+            String image = scModeles.next();
             float prix = Float.parseFloat(scModeles.next());
 
-            Modele m = new Modele(nom, puissance, moteur, prix);
+            Modele m = new Modele(nom, puissance, moteur, prix, image);
             ajouteModele(m);
         }
         scModeles.close();
@@ -179,9 +161,10 @@ public class Garage
 
     public void LoadOptions() throws FileNotFoundException
     {
-        File fileOptions = new File("CSV\\options.csv");
+        File fileOptions = new File("Data" + File.separator + "CSV" + File.separator+ "options.csv");
         Scanner scOptions = new Scanner(fileOptions);
         scOptions.useDelimiter(";|\n");
+        scOptions.nextLine();
         while(scOptions.hasNext())
         {
             String code = scOptions.next();
@@ -196,7 +179,7 @@ public class Garage
 
     public void LoadContrats() throws FileNotFoundException
     {
-        File fileContrats = new File("CSV\\contrats.csv");
+        File fileContrats = new File("CSV" + File.separator + "contrats.csv");
         Scanner scContrats = new Scanner(fileContrats);
         int Inumero = Integer.parseInt(scContrats.nextLine());
         Contrat.setInumero(Inumero);
@@ -217,7 +200,7 @@ public class Garage
 
     public void LoadEmployes() throws FileNotFoundException
     {
-        File fileEmployes = new File("CSV\\employes.csv");
+        File fileEmployes = new File("CSV" + File.separator + "employes.csv");
         Scanner scEmployes = new Scanner(fileEmployes);
         scEmployes.useDelimiter(";|\n");
 
@@ -234,6 +217,35 @@ public class Garage
             ajouteEmploye(e);
         }
         scEmployes.close();
+    }
+
+    public void SaveModeles() throws IOException
+    {
+        FileWriter writer = new FileWriter("Data" + File.separator + "CSV" + File.separator + "modeles.csv");
+        Garage.getInstance().getModeles().forEach(m -> {
+            try {
+                writer.write(m.getNom() + ";" + m.getPuissance() + ";" + m.getMoteur() + ";" + m.getImage() + ";" + m.getPrixDeBase()+ "\n");
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+        });
+        writer.close();
+    }
+
+    public void SaveOptions() throws IOException
+    {
+        FileWriter writer = new FileWriter("Data" + File.separator + "CSV" + File.separator + "options.csv");
+        Garage.getInstance().getOptions().forEach(o -> {
+            try
+            {
+                writer.write(o.getCode() + ";" + o.getIntitule() + ";" + o.getPrix() + "\n");
+            }
+            catch(IOException e)
+            {
+                System.out.println(e.getMessage());
+            }
+        });
+        writer.close();
     }
 
     public void ajouteOption(Option o)
@@ -270,7 +282,7 @@ public class Garage
     public List<Client> getClients(){return clients;}
     public List<Employe> getEmployes(){return employes;}
     public Vector<Contrat> getContrats(){return contrats;}
-
+    public Vector<Modele> getModeles(){return modeles;}
     public int getIdConnected(){return idConnected;}
     public void setIdConnected(int id) {idConnected = id;}
 }

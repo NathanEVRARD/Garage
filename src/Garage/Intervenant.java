@@ -1,6 +1,8 @@
 package Garage;
 
-public abstract class Intervenant extends Personne implements IEstIdentifiable
+import java.io.Serializable;
+
+public abstract class Intervenant extends Personne implements IEstIdentifiable, Serializable
 {
     private static int Inumero = 1;
     public int numero;

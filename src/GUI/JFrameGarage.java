@@ -13,6 +13,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -56,8 +58,13 @@ public class JFrameGarage extends JFrame
     {
         setTitle("Application Garage JAVA");
         setContentPane(mainPanel);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+
+        //LECTURE CSV
+
+        loadModelesCSV();
+        loadOptionsCSV();
 
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(radioButtonDiesel);
@@ -132,6 +139,57 @@ public class JFrameGarage extends JFrame
             radioButtonEssence.setEnabled(false);
             radioButtonHybride.setEnabled(false);
         }
+
+        addWindowListener(new WindowListener() {
+
+            @Override
+            public void windowOpened(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                try
+                {
+                    Garage.getInstance().SaveModeles();
+                    Garage.getInstance().SaveOptions();
+                    Garage.getInstance().SaveGarage();
+                }
+                catch(Exception exc)
+                {
+                    System.out.println(exc.getMessage());
+                }
+                System.out.println("Sauvegarde des modèles");
+                System.out.println("Sauvegarde des options");
+                System.out.println("Sérialisation du garage");
+                System.exit(0);
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+
+            }
+        });
 
 
         //login
@@ -341,9 +399,12 @@ public class JFrameGarage extends JFrame
                         if (dialog.isOk())
                         {
                             System.out.println("Choix : " + dialog.getNom() + "-" + dialog.getMoteur() + "-" + dialog.getPuissance() + "-" + dialog.getPrixDeBase());
-                            Modele modele = new Modele(dialog.getNom(),dialog.getPuissance(),dialog.getMoteur(),dialog.getPrixDeBase());
+                            Modele modele = new Modele(dialog.getNom(),dialog.getPuissance(),dialog.getMoteur(),dialog.getPrixDeBase(), dialog.getImage());
                             comboBoxModelesDisponibles.addItem(modele);
                             Garage.getInstance().ajouteModele(modele);
+                            Garage.getInstance().getModeles().forEach(m -> {
+                                System.out.println(m.toString());
+                            });
                         }
                         dialog.dispose();
                     }
@@ -669,6 +730,17 @@ public class JFrameGarage extends JFrame
         menuItemQuitter.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                try
+                {
+                    Garage.getInstance().SaveModeles();
+                    Garage.getInstance().SaveOptions();
+                }
+                catch(Exception exc)
+                {
+                    System.out.println(exc.getMessage());
+                }
+                System.out.println("Sauvegarde des modèles");
+                System.out.println("Sauvegarde des modèles");
                 System.exit(0);
             }
         });
@@ -681,19 +753,9 @@ public class JFrameGarage extends JFrame
             @Override
             public void actionPerformed(ActionEvent e) {
                 Modele modele = (Modele) comboBoxModelesDisponibles.getSelectedItem();
-                if (modele == null) return;
-                textFieldModele.setText(modele.getNom());
-                textFieldPuissance.setText(String.valueOf(modele.getPuissance()));
-                textFieldPrixDeBase.setText(String.valueOf(modele.getPrixDeBase()));
-                if (modele.getMoteur().equals("Essence")) radioButtonEssence.setSelected(true);
-                if (modele.getMoteur().equals("Diesel")) radioButtonDiesel.setSelected(true);
-                if (modele.getMoteur().equals("Electrique")) radioButtonElectrique.setSelected(true);
-                if (modele.getMoteur().equals("Hybride")) radioButtonHybride.setSelected(true);
-                DefaultTableModel model = (DefaultTableModel) tableOptionsChoisies.getModel();
-                model.setRowCount(0);
                 Voiture v = new Voiture("nom", modele);
                 Garage.setProjetEnCours(v);
-                updatePrixAvecOptions();
+                afficheProjetEnCours();
             }
         });
         buttonChoisirOption.addActionListener(new ActionListener() {
@@ -879,37 +941,47 @@ public class JFrameGarage extends JFrame
                 }
             }
         });
-
-        Garage.getInstance().ajouteOption(new Option("ABBA", "Vitres teintées", 250));
-        comboBoxOptionsDisponibles.addItem(new Option("ABBA", "Vitres teintées", 250));
-        Garage.getInstance().ajouteModele(new Modele("Andrew", 100, "Diesel", 3600));
-        comboBoxModelesDisponibles.addItem(new Modele("Andrew", 100, "Diesel", 3600));
     }
 
     private void afficheProjetEnCours()
     {
         Voiture v = Garage.getProjetEnCours();
-        textFieldModele.setText(v.getModele().getNom());
-        textFieldPrixDeBase.setText(String.valueOf(v.getModele().getPrixDeBase()));
-        textFieldPuissance.setText(String.valueOf(v.getModele().getPuissance()));
-        if (v.getModele().getMoteur().equals("Essence")) radioButtonEssence.setSelected(true);
-        if (v.getModele().getMoteur().equals("Diesel")) radioButtonDiesel.setSelected(true);
-        if (v.getModele().getMoteur().equals("Electrique")) radioButtonElectrique.setSelected(true);
-        if (v.getModele().getMoteur().equals("Hybride")) radioButtonHybride.setSelected(true);
-        DefaultTableModel model = (DefaultTableModel) tableOptionsChoisies.getModel();
-        model.setRowCount(0);
-        for(int i = 0; i < 5; i++)
+        if(v.getModele() != null)
         {
-            Option o = v.getOption(i);
-            if(o != null) {
-                Vector ligne = new Vector();
-                ligne.add(o.getCode());
-                ligne.add(o.getIntitule());
-                ligne.add(o.getPrix());
-                model.addRow(ligne);
+            textFieldModele.setText(v.getModele().getNom());
+            textFieldPrixDeBase.setText(String.valueOf(v.getModele().getPrixDeBase()));
+            textFieldPuissance.setText(String.valueOf(v.getModele().getPuissance()));
+            if (v.getModele().getMoteur().equals("Essence")) radioButtonEssence.setSelected(true);
+            if (v.getModele().getMoteur().equals("Diesel")) radioButtonDiesel.setSelected(true);
+            if (v.getModele().getMoteur().equals("Electrique")) radioButtonElectrique.setSelected(true);
+            if (v.getModele().getMoteur().equals("Hybride")) radioButtonHybride.setSelected(true);
+            DefaultTableModel model = (DefaultTableModel) tableOptionsChoisies.getModel();
+            ImageIcon icon = new ImageIcon("Data" + File.separator + "images" + File.separator + v.getModele().getImage());
+            labelImage.setIcon(icon);
+            model.setRowCount(0);
+            for(int i = 0; i < 5; i++)
+            {
+                Option o = v.getOption(i);
+                if(o != null) {
+                    Vector ligne = new Vector();
+                    ligne.add(o.getCode());
+                    ligne.add(o.getIntitule());
+                    ligne.add(o.getPrix());
+                    model.addRow(ligne);
+                }
             }
+            updatePrixAvecOptions();
         }
-        updatePrixAvecOptions();
+        else
+        {
+            textFieldModele.setText("");
+            textFieldPrixDeBase.setText("");
+            textFieldPuissance.setText("");
+            radioButtonEssence.setSelected(true);
+            DefaultTableModel model = (DefaultTableModel) tableOptionsChoisies.getModel();
+            model.setRowCount(0);
+            labelImage.setIcon(null);
+        }
     }
 
     private void afficheOptions()
@@ -957,6 +1029,37 @@ public class JFrameGarage extends JFrame
             ligne.add(e.getFonction());
             model.addRow(ligne);
         });
+    }
+
+    private void loadModelesCSV()
+    {
+        try
+        {
+            Garage.getInstance().LoadModeles();
+            Garage.getInstance().getModeles().forEach(m -> {
+                comboBoxModelesDisponibles.addItem(m);
+            });
+        }
+        catch(Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    private void loadOptionsCSV()
+    {
+        try
+        {
+            Garage.getInstance().LoadOptions();
+            Garage.getInstance().getOptions().forEach(o -> {
+                comboBoxOptionsDisponibles.addItem(o);
+            });
+        }
+        catch(Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void updatePrixAvecOptions()

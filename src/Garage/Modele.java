@@ -6,17 +6,19 @@ import java.io.Serializable;
 
 public class Modele implements Serializable
 {
-    public Modele(String nom, int puissance, String moteur, float prixDeBase) {
+    public Modele(String nom, int puissance, String moteur, float prixDeBase, String image) {
         this.nom = nom;
         this.puissance = puissance;
         this.moteur = moteur;
         this.prixDeBase = prixDeBase;
+        this.image = image;
     }
 
     private String nom;
     private int puissance;
     private String moteur;
     private float prixDeBase;
+    private String image;
 
     @Override
     public String toString() {
@@ -30,6 +32,7 @@ public class Modele implements Serializable
     public void setNom(String nom) {
         this.nom = nom;
     }
+    public void setImage(String image){this.image = image;}
 
     public int getPuissance() {
         return puissance;
@@ -42,6 +45,7 @@ public class Modele implements Serializable
     public String getMoteur() {
         return moteur;
     }
+    public String getImage(){return image;}
 
     public void setMoteur(String moteur) {
         this.moteur = moteur;

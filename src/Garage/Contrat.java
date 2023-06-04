@@ -3,8 +3,9 @@ package Garage;
 import javax.imageio.IIOException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
 
-public class Contrat implements IEstIdentifiable
+public class Contrat implements IEstIdentifiable, Serializable
 {
     private static int Inumero = 1;
     private int numero;

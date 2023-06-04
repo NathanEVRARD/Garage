@@ -2,8 +2,9 @@ package Garage;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
 
-public class Employe extends Intervenant implements IEstIdentifiable
+public class Employe extends Intervenant implements IEstIdentifiable, Serializable
 {
     private String login;
     private String mdp;

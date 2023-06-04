@@ -5,8 +5,9 @@ import java.io.FileNotFoundException;
 public class Main {
     public static void main(String[] args)
     {
-        Modele m = new Modele("Swift", 70, "Essence", 3000);
-        Modele m2 = new Modele("Corsa", 75, "Diesel", 4500);
+        /*
+        Modele m = new Modele("Swift", 70, "Essence", 3000, "");
+        Modele m2 = new Modele("Corsa", 75, "Diesel", 4500, "");
         Option op1 = new Option("ABBA", "Essuie-glace", 120);
         Option op2 = new Option("0MM0", "Pare-choc solide", 2000);
         Option op3 = new Option("AKKA", "Vitres teintées", 150);
@@ -38,7 +39,6 @@ public class Main {
 //            System.out.print(ef.getMessage());
 //        }
 //
-        Garage.getInstance().Save();
 
         v.ajouteOption(op1);
         v.ajouteOption(op2);
@@ -63,7 +63,7 @@ public class Main {
 //        System.out.println("\nEmployes : ");
 //        Garage.getInstance().afficheEmployes();
 //        System.out.println("\nOptions : ");
-//        Garage.getInstance().afficheOptions();
+//        Garage.getInstance().afficheOptions();*/
 
     }
 }

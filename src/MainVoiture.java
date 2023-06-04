@@ -7,8 +7,8 @@ public class MainVoiture {
     public static void main(String[] args)
     {
         /* Test du constructeur d'initialisation */
-        Modele m = new Modele("Swift", 70, "Essence", 3000);
-        Modele m2 = new Modele("Corsa", 75, "Diesel", 4500);
+        Modele m = new Modele("Swift", 70, "Essence", 3000, "");
+        Modele m2 = new Modele("Corsa", 75, "Diesel", 4500, "");
 
         Option o = new Option("AAZE","Vitre teinté",135);
         Option o2 = new Option("AZEE","Toit ouvrant",200);

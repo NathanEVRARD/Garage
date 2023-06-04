@@ -2,8 +2,9 @@ package Garage;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
 
-public class Client extends Intervenant
+public class Client extends Intervenant implements Serializable
 {
     private String gsm;
 

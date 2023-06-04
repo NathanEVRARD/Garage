@@ -9,8 +9,8 @@ public class MainModele {
     {
         /* Test du constructeur d'initialisation */
 
-        Modele m = new Modele("Swift", 70, "Essence", 3000);
-        Modele m2 = new Modele("Corsa", 75, "Diesel", 4500);
+        Modele m = new Modele("Swift", 70, "Essence", 3000, "");
+        Modele m2 = new Modele("Corsa", 75, "Diesel", 4500, "");
 
         /* Test de la fonction ToString() */
         System.out.println(m.toString() + "\n");
