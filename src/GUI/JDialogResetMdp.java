@@ -3,34 +3,24 @@ package GUI;
 import javax.swing.*;
 import java.awt.event.*;
 
-public class JDialogNouvelEmploye extends JDialog {
+public class JDialogResetMdp extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
-    private JTextField textFieldNom;
-    private JTextField textFieldPrenom;
-    private JRadioButton vendeurRadioButton;
-    private JRadioButton administrateurRadioButton;
-    private JTextField textFieldLogin;
-    private JPasswordField passwordFieldMdp;
+    private JTextField textFieldmdpconfirmed;
+    private JTextField textFieldmdp;
 
-    private String nom;
-    private String prenom;
-    private String login;
     private String mdp;
-    private String fonction;
+
+    private String mdpConfirmed;
+
     private boolean ok;
 
-    public JDialogNouvelEmploye() {
-
-        super();
-        ButtonGroup buttonGroup = new ButtonGroup();
-        buttonGroup.add(vendeurRadioButton);
-        buttonGroup.add(administrateurRadioButton);;
+    public JDialogResetMdp() {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-        setTitle("Nouvel employé ...");
+        setTitle("Chnager de mot de passe !");
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -61,26 +51,11 @@ public class JDialogNouvelEmploye extends JDialog {
     }
 
     private void onOK() {
-        nom = textFieldNom.getText();
-        prenom = textFieldPrenom.getText();
-        login = textFieldLogin.getText();
-        mdp = passwordFieldMdp.getText();
-
-        if(vendeurRadioButton.isSelected())
-        {
-            fonction = "Vendeur";
-        }
-        else
-        {
-            if(administrateurRadioButton.isSelected())
-            {
-                fonction = "Administratif";
-            }
-        }
-
         ok = true;
-        setVisible(false);
+        mdp = textFieldmdp.getText();
+        mdpConfirmed = textFieldmdpconfirmed.getText();
         dispose();
+        setVisible(false);
     }
 
     private void onCancel() {
@@ -90,30 +65,19 @@ public class JDialogNouvelEmploye extends JDialog {
     }
 
     public static void main(String[] args) {
-        JDialogNouvelEmploye dialog = new JDialogNouvelEmploye();
+        JDialogResetMdp dialog = new JDialogResetMdp();
         dialog.pack();
         dialog.setVisible(true);
         System.exit(0);
     }
 
-    public String getNom() {
-        return nom;
-    }
-
-    public String getPrenom() {
-        return prenom;
-    }
-
-    public String getMdp() {
+    public String getMdp()
+    {
         return mdp;
     }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public String getFonction() {
-        return fonction;
+    public String getMdpConfirmed()
+    {
+        return mdpConfirmed;
     }
 
     public boolean isOk() {

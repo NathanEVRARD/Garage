@@ -32,7 +32,7 @@ public class JDialogLogin extends JDialog
             @Override
             public void actionPerformed(ActionEvent e) {
                 login = textFieldLogin.getText();
-                motDePasse = textFieldLogin.getText();
+                motDePasse = textFieldMotDePasse.getText();
                 ok = true;
                 setVisible(false);
             }

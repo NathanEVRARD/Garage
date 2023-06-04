@@ -15,6 +15,7 @@ public class Garage
     Vector<Option> options;
     Vector<Contrat> contrats;
 
+    int idConnected;
     private Garage()
     {
         options = new Vector<Option>();
@@ -22,6 +23,7 @@ public class Garage
         contrats = new Vector<Contrat>();
         clients = new ArrayList<Client>();
         employes = new ArrayList<Employe>();
+        setIdConnected(-1);
     }
 
     private Garage(Garage g)
@@ -270,4 +272,8 @@ public class Garage
     }
     public List<Client> getClients(){return clients;}
     public List<Employe> getEmployes(){return employes;}
+
+    public int getIdConnected(){ return idConnected;}
+
+    public void setIdConnected(int id){ idConnected = id;}
 }
