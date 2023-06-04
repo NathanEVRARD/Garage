@@ -65,13 +65,13 @@ public class JDialogNouvelEmploye extends JDialog {
 
         if(vendeurRadioButton.isSelected())
         {
-            fonction = "VENDEUR";
+            fonction = "Vendeur";
         }
         else
         {
             if(administrateurRadioButton.isSelected())
             {
-                fonction = "ADMINISTRATEUR";
+                fonction = "Administratif";
             }
         }
 

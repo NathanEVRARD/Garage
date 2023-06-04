@@ -222,6 +222,37 @@ public class JFrameGarage extends JFrame
             }
         });
 
+        // Permet de supprimer un client par selection
+        menuItemSupprimeClientSelec.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(tableClients.isRowSelected(tableClients.getSelectedRow()))
+                {
+                    JDialogConfirmation dialogConfirmation = new JDialogConfirmation("Êtes-vous sur de vouloir supprimer ce client ?");
+                    dialogConfirmation.pack();
+                    dialogConfirmation.setLocationRelativeTo(null);
+                    dialogConfirmation.setVisible(true);
+                    if(dialogConfirmation.isOk())
+                    {
+                        DefaultTableModel tableModel = (DefaultTableModel) tableClients.getModel();
+                        tableModel.removeRow(tableClients.getSelectedRow());
+                        dialogConfirmation.setVisible(false);
+                    }
+                    else
+                    {
+                        dialogConfirmation.setVisible(false);
+                    }
+                }
+                else
+                {
+                    JDialogMessage dialogMessage = new JDialogMessage("Veuillez selectionner une ligne dans la table clients !");
+                    dialogMessage.pack();
+                    dialogMessage.setLocationRelativeTo(null);
+                    dialogMessage.setVisible(true);
+                }
+            }
+        });
+
         // Permet d'ajouter un employe
         menuItemAjouteEmploye.addActionListener(new ActionListener() {
             @Override
@@ -233,12 +264,13 @@ public class JFrameGarage extends JFrame
                 if(dialog.isOk())
                 {
                     Employe employe = new Employe(dialog.getNom(), dialog.getPrenom(), dialog.getLogin(), dialog.getMdp(), dialog.getFonction());
-
-                    JTable modelTable = tableEmployes;
-                    Object[] rowData = new Object[]{Integer.valueOf(employe.getNumero()),dialog.getNom(),dialog.getPrenom(),dialog.getFonction()};
-
-                    // code ajout
-
+                    DefaultTableModel tableModel = (DefaultTableModel) tableEmployes.getModel();
+                    Vector ligne = new Vector();
+                    ligne.add(Integer.valueOf(employe.getNumero()));
+                    ligne.add(dialog.getNom());
+                    ligne.add(dialog.getPrenom());
+                    ligne.add(dialog.getFonction());
+                    tableModel.addRow(ligne);
                     Garage.getInstance().ajouteEmploye(employe);
                 }
             }
@@ -293,11 +325,41 @@ public class JFrameGarage extends JFrame
                 }
             }
         });
+        // Permet de supprimer un employé par selection
+        menuItemSupprimeEmployeSelec.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(tableEmployes.isRowSelected(tableEmployes.getSelectedRow()))
+                {
+                    JDialogConfirmation dialogConfirmation = new JDialogConfirmation("Êtes-vous sur de vouloir supprimer cet employé ?");
+                    dialogConfirmation.pack();
+                    dialogConfirmation.setLocationRelativeTo(null);
+                    dialogConfirmation.setVisible(true);
+                    if(dialogConfirmation.isOk())
+                    {
+                        DefaultTableModel tableModel = (DefaultTableModel) tableEmployes.getModel();
+                        tableModel.removeRow(tableEmployes.getSelectedRow());
+                        dialogConfirmation.setVisible(false);
+                    }
+                    else
+                    {
+                        dialogConfirmation.setVisible(false);
+                    }
+                }
+                else
+                {
+                    JDialogMessage dialogMessage = new JDialogMessage("Veuillez selectionner une ligne dans la table employés !");
+                    dialogMessage.pack();
+                    dialogMessage.setLocationRelativeTo(null);
+                    dialogMessage.setVisible(true);
+                }
+            }
+        });
 
 
 
-        // Table des employes
-        Object[][] data = new Object[][]{
+
+        /*Object[][] data = new Object[][]{
                 {Integer.valueOf(1), "Wagner", "Jean-Marc", "Vendeur"},
                 {Integer.valueOf(2), "Charlet", "Christophe", "Administratif"}
         };
@@ -310,21 +372,41 @@ public class JFrameGarage extends JFrame
             col = tableEmployes.getColumnModel().getColumn(i);
             col.setPreferredWidth(taillesColonnes[i]);
         }
-        jScrollPaneEmployes.setViewportView(tableEmployes);
+        jScrollPaneEmployes.setViewportView(tableEmployes);*/
+
+        // Table des employes
+        tableEmployes = new JTable();
+        DefaultTableModel tableModel = (DefaultTableModel) tableEmployes.getModel();
+        String[] nomsColonnes = { "Num", "Nom", "Prénom", "Fonction"};
+        tableModel.setColumnIdentifiers(nomsColonnes);
+        Vector ligne = new Vector();
+        ligne.add(Integer.valueOf(1));
+        ligne.add("Wagner");
+        ligne.add("Jean-Marc");
+        ligne.add("Vendeur");
+        tableModel.addRow(ligne);
+        ligne = new Vector<>();
+        ligne.add(Integer.valueOf(2));
+        ligne.add("Charlet");
+        ligne.add("Christophe");
+        ligne.add("Administratif");
+        tableModel.addRow(ligne);
+        //tableEmployes.setModel(tableModel);
+        jScrollPaneEmployes.setViewportView(tableEmployes); // permet de voir le tableauu dans l'interfae
 
         // Table des clients
         tableClients = new JTable();
-        DefaultTableModel tableModel = (DefaultTableModel) tableClients.getModel();
+        tableModel = (DefaultTableModel) tableClients.getModel();
         String[] nomsColonnes2 = { "Num", "Nom", "Prénom", "GSM"};
         tableModel.setColumnIdentifiers(nomsColonnes2);
-        Vector ligne = new Vector();
+        ligne = new Vector();
         ligne.add(Integer.valueOf(1));
         ligne.add("Wagner");
         ligne.add("Jean-Marc");
         ligne.add("0478/75.53.36");
         tableModel.addRow(ligne);
         //tableClients.setModel(tableModel);
-        jScrollPaneClients.setViewportView(tableClients);
+        jScrollPaneClients.setViewportView(tableClients); // permet de voir le tableauu dans l'interfae
 
         // Table des contrats
         tableModel = (DefaultTableModel) tableContrats.getModel();
