@@ -24,6 +24,9 @@ public class JDialogNouvelEmploye extends JDialog {
     public JDialogNouvelEmploye() {
 
         super();
+        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(vendeurRadioButton);
+        buttonGroup.add(administrateurRadioButton);;
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);

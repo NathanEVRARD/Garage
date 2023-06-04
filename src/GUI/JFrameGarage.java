@@ -109,6 +109,227 @@ public class JFrameGarage extends JFrame
         JMenuItem menuItemNouvelleOption = new JMenuItem("Nouvelle Option");
         menuVoiture.add(menuItemNouvelleOption);
 
+        // Gestion du login et logout + reset mdp
+        // créer le super admin au lancement ?
+
+        if(Garage.getInstance().getIdConnected() == -1)
+        {
+            menuItemLogout.setEnabled(false); // car personne n'est connecté au lancement de l'appli
+            menuClients.setEnabled(false); // car personne n'est connecté au lancement de l'appli
+            //menuEmployes.setEnabled(false); // car personne n'est connecté au lancement de l'appli
+            menuVoiture.setEnabled(false); // car personne n'est connecté au lancement de l'appli
+            menuItemResetMotDePasse.setEnabled(false); // car personne n'est connecté au lancement de l'appli
+            buttonAccorderReduction.setEnabled(false);
+            buttonChoisirModele.setEnabled(false);
+            buttonChoisirOption.setEnabled(false);
+            buttonSupprimerOption.setEnabled(false);
+            buttonNouveauProjet.setEnabled(false);
+            buttonOuvrirProjet.setEnabled(false);
+            buttonEnregistrerProjet.setEnabled(false);
+            // ajouter les boutons contrats.
+            radioButtonDiesel.setEnabled(false);
+            radioButtonElectrique.setEnabled(false);
+            radioButtonEssence.setEnabled(false);
+            radioButtonHybride.setEnabled(false);
+        }
+
+
+        //login
+        menuItemLogin.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JDialogLogin dialog = new JDialogLogin(null,true,"Entrée en session...");
+                dialog.setVisible(true);
+
+                if(dialog.isOk())
+                {
+                    for(int i = 0;i<Garage.getInstance().getEmployes().size();i++)
+                    {
+                        if(Garage.getInstance().getEmployes().get(i).getLogin().equals(dialog.getLogin()) &&  Garage.getInstance().getEmployes().get(i).getMdp().equals(dialog.getMotDePasse()))
+                        {
+                            setTitle("Application Garage JAVA - "+dialog.getLogin());
+                            JDialogMessage dialogMessage = new JDialogMessage("Connexion réussie !");
+                            dialogMessage.pack();
+                            dialogMessage.setLocationRelativeTo(null);
+                            dialogMessage.setVisible(true);
+                            if(Garage.getInstance().getEmployes().get(i).getFonction().equals("Administratif"))
+                            {
+                                menuItemLogin.setEnabled(false);
+                                menuItemLogout.setEnabled(true);
+                                menuClients.setEnabled(false);
+                                menuEmployes.setEnabled(true);
+                                menuVoiture.setEnabled(false);
+                                menuItemResetMotDePasse.setEnabled(true);
+                                buttonAccorderReduction.setEnabled(false);
+                                buttonChoisirModele.setEnabled(false);
+                                buttonChoisirOption.setEnabled(false);
+                                buttonSupprimerOption.setEnabled(false);
+                                buttonNouveauProjet.setEnabled(false);
+                                buttonOuvrirProjet.setEnabled(false);
+                                buttonEnregistrerProjet.setEnabled(false);
+                                // ajouter les boutons contrats.
+                                radioButtonDiesel.setEnabled(false);
+                                radioButtonElectrique.setEnabled(false);
+                                radioButtonEssence.setEnabled(false);
+                                radioButtonHybride.setEnabled(false);
+
+                            }
+                            else
+                            {
+                                if(Garage.getInstance().getEmployes().get(i).getFonction().equals("Vendeur"))
+                                {
+                                    menuItemLogin.setEnabled(false);
+                                    menuItemLogout.setEnabled(true);
+                                    menuClients.setEnabled(true);
+                                    menuEmployes.setEnabled(false);
+                                    menuVoiture.setEnabled(true);
+                                    menuItemResetMotDePasse.setEnabled(true);
+                                    buttonAccorderReduction.setEnabled(true);
+                                    buttonChoisirModele.setEnabled(true);
+                                    buttonChoisirOption.setEnabled(true);
+                                    buttonSupprimerOption.setEnabled(true);
+                                    buttonNouveauProjet.setEnabled(true);
+                                    buttonOuvrirProjet.setEnabled(true);
+                                    buttonEnregistrerProjet.setEnabled(true);
+                                    // ajouter les boutons contrats.
+                                    radioButtonDiesel.setEnabled(true);
+                                    radioButtonElectrique.setEnabled(true);
+                                    radioButtonEssence.setEnabled(true);
+                                    radioButtonHybride.setEnabled(true);
+                                }
+                                else // super admin
+                                {
+                                    menuItemLogin.setEnabled(false);
+                                    menuItemLogout.setEnabled(true);
+                                    menuClients.setEnabled(true);
+                                    menuEmployes.setEnabled(true);
+                                    menuVoiture.setEnabled(true);
+                                    menuItemResetMotDePasse.setEnabled(true);
+                                    buttonAccorderReduction.setEnabled(true);
+                                    buttonChoisirModele.setEnabled(true);
+                                    buttonChoisirOption.setEnabled(true);
+                                    buttonSupprimerOption.setEnabled(true);
+                                    buttonNouveauProjet.setEnabled(true);
+                                    buttonOuvrirProjet.setEnabled(true);
+                                    buttonEnregistrerProjet.setEnabled(true);
+                                    // ajouter les boutons contrats.
+                                    radioButtonDiesel.setEnabled(true);
+                                    radioButtonElectrique.setEnabled(true);
+                                    radioButtonEssence.setEnabled(true);
+                                    radioButtonHybride.setEnabled(true);
+                                }
+
+                            }
+
+                            Garage.getInstance().setIdConnected(Garage.getInstance().getEmployes().get(i).getNumero());
+                            i = Garage.getInstance().getEmployes().size();
+                        }
+                    }
+                    if(Garage.getInstance().getIdConnected() == -1)
+                    {
+                        JDialogMessage dialogMessage = new JDialogMessage("Connexion échoué !");
+                        dialogMessage.pack();
+                        dialogMessage.setLocationRelativeTo(null);
+                        dialogMessage.setVisible(true);
+                    }
+                }
+                else
+                {
+                    menuItemLogin.setEnabled(true);
+                    menuItemLogout.setEnabled(false);
+                    menuClients.setEnabled(false);
+                    menuEmployes.setEnabled(false);
+                    menuVoiture.setEnabled(false);
+                    menuItemResetMotDePasse.setEnabled(false);
+                    buttonAccorderReduction.setEnabled(false);
+                    buttonChoisirModele.setEnabled(false);
+                    buttonChoisirOption.setEnabled(false);
+                    buttonSupprimerOption.setEnabled(false);
+                    buttonNouveauProjet.setEnabled(false);
+                    buttonOuvrirProjet.setEnabled(false);
+                    buttonEnregistrerProjet.setEnabled(false);
+                    // ajouter les boutons contrats.
+                    radioButtonDiesel.setEnabled(false);
+                    radioButtonElectrique.setEnabled(false);
+                    radioButtonEssence.setEnabled(false);
+                    radioButtonHybride.setEnabled(false);
+
+                }
+            }
+        });
+        // logout
+        menuItemLogout.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JDialogConfirmation dialog = new JDialogConfirmation("Voulez-vous vraiment vous déconnecter ?");
+                dialog.pack();
+                dialog.setLocationRelativeTo(null);
+                dialog.setVisible(true);
+
+                if(dialog.isOk())
+                {
+                    setTitle("Application Garage JAVA");
+                    Garage.getInstance().setIdConnected(-1);
+                    menuItemLogin.setEnabled(true);
+                    menuItemLogout.setEnabled(false);
+                    menuClients.setEnabled(false);
+                    menuEmployes.setEnabled(false);
+                    menuVoiture.setEnabled(false);
+                    menuItemResetMotDePasse.setEnabled(false);
+                    buttonAccorderReduction.setEnabled(false);
+                    buttonChoisirModele.setEnabled(false);
+                    buttonChoisirOption.setEnabled(false);
+                    buttonSupprimerOption.setEnabled(false);
+                    buttonNouveauProjet.setEnabled(false);
+                    buttonOuvrirProjet.setEnabled(false);
+                    buttonEnregistrerProjet.setEnabled(false);
+                    // ajouter les boutons contrats.
+                    radioButtonDiesel.setEnabled(false);
+                    radioButtonElectrique.setEnabled(false);
+                    radioButtonEssence.setEnabled(false);
+                    radioButtonHybride.setEnabled(false);
+                }
+            }
+        });
+        // reset mdp
+        menuItemResetMotDePasse.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JDialogResetMdp dialogResetMdp = new JDialogResetMdp();
+                dialogResetMdp.pack();
+                dialogResetMdp.setLocationRelativeTo(null);
+                dialogResetMdp.setVisible(true);
+                if(dialogResetMdp.isOk())
+                {
+                    if(dialogResetMdp.getMdp().equals(dialogResetMdp.getMdpConfirmed()))
+                    {
+                        JDialogConfirmation dialogConfirmation = new JDialogConfirmation("Êtes-vous sûr de vouloir changer votre mot de passe ?");
+                        dialogConfirmation.pack();
+                        dialogConfirmation.setLocationRelativeTo(null);
+                        dialogConfirmation.setVisible(true);
+                        if(dialogConfirmation.isOk())
+                        {
+                            for (int i = 0; i < Garage.getInstance().getEmployes().size(); i++)
+                            {
+                                if (Garage.getInstance().getEmployes().get(i).getNumero() == Garage.getInstance().getIdConnected())
+                                {
+                                    Garage.getInstance().getEmployes().get(i).setMdp(dialogResetMdp.getMdp());
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        JDialogMessage dialogMessage = new JDialogMessage("Les mots de passe ne correspondent pas !");
+                        dialogMessage.pack();
+                        dialogMessage.setLocationRelativeTo(null);
+                        dialogMessage.setVisible(true);
+                    }
+                }
+            }
+        });
+
+
         menuItemNouveauModele.addActionListener(
                 new ActionListener() {
                     @Override
@@ -452,13 +673,7 @@ public class JFrameGarage extends JFrame
             }
         });
 
-        menuItemLogin.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JDialogLogin dialog = new JDialogLogin(null,true,"Entrée en session...");
-                dialog.setVisible(true);
-            }
-        });
+
 
         pack();
         setLocation((screen.width - this.getSize().width)/2,(screen.height - this.getSize().height)/2);
