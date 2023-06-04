@@ -16,7 +16,7 @@ public class Contrat implements IEstIdentifiable
     {
         setClientRef(c.getNumero());
         setEmployeRef(e.getNumero());
-        setNumero(Inumero++);
+        setNumero(Inumero);
         setNom(n);
     }
 
@@ -24,7 +24,7 @@ public class Contrat implements IEstIdentifiable
     {
         setClientRef(c);
         setEmployeRef(e);
-        setNumero(Inumero++);
+        setNumero(Inumero);
     }
 
     public Contrat(int i, int c, int e)
@@ -88,12 +88,20 @@ public class Contrat implements IEstIdentifiable
     @Override
     public String toString()
     {
-        return getNumero() + ";" + getNom() + ";" + getClientRef() + ";" + getEmployeRef();
+        return getNom() + ";" + getClientRef() + ";" + getEmployeRef();
     }
 
     public boolean equals(Contrat c)
     {
         if(c.getEmployeRef() == this.getEmployeRef() && c.getClientRef() == this.getClientRef() && c.getNom() == this.getNom() && c.getNumero() == this.getNumero())
+            return true;
+        else
+            return false;
+    }
+
+    public boolean equalsButNum(Contrat c)
+    {
+        if(c.getEmployeRef() == this.getEmployeRef() && c.getClientRef() == this.getClientRef() && c.getNom().equals(this.getNom()))
             return true;
         else
             return false;
@@ -109,5 +117,10 @@ public class Contrat implements IEstIdentifiable
         {
             System.out.print(e.getMessage());
         }
+    }
+
+    public static void IncrementINumero()
+    {
+        Inumero++;
     }
 }

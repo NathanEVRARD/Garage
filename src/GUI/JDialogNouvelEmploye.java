@@ -69,15 +69,20 @@ public class JDialogNouvelEmploye extends JDialog {
         }
         else
         {
-            if(administrateurRadioButton.isSelected())
+
             {
                 fonction = "Administratif";
             }
         }
 
-        ok = true;
-        setVisible(false);
-        dispose();
+        if(vendeurRadioButton.isSelected() || administrateurRadioButton.isSelected())
+        {
+            ok = true;
+            setVisible(false);
+            dispose();
+        }
+        else
+            JOptionPane.showMessageDialog(this, "Veuillez choisir la fonction de l'employé");
     }
 
     private void onCancel() {
@@ -116,4 +121,6 @@ public class JDialogNouvelEmploye extends JDialog {
     public boolean isOk() {
         return ok;
     }
+
+
 }

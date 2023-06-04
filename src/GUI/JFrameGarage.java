@@ -10,11 +10,12 @@ import java.swing.ButtonGroup;
 import java.swing.table.TableModel;*/
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class JFrameGarage extends JFrame
 {
@@ -147,8 +148,6 @@ public class JFrameGarage extends JFrame
                 dialog.dispose();
             }
         });
-
-
         // Permet d'ajouter un client
         menuItemAjouteClient.addActionListener(new ActionListener() {
             @Override
@@ -160,14 +159,8 @@ public class JFrameGarage extends JFrame
                 if(dialog.isOk())
                 {
                     Client client = new Client(dialog.getNom(), dialog.getPrenom(), dialog.getGsm());
-                    DefaultTableModel tableModel = (DefaultTableModel) tableClients.getModel();
-                    Vector ligne = new Vector();
-                    ligne.add(Integer.valueOf(client.getNumero()));
-                    ligne.add(dialog.getNom());
-                    ligne.add(dialog.getPrenom());
-                    ligne.add(dialog.getGsm());
-                    tableModel.addRow(ligne);
                     Garage.getInstance().ajouteClient(client);
+                    afficheClients();
                 }
             }
         });
@@ -264,14 +257,8 @@ public class JFrameGarage extends JFrame
                 if(dialog.isOk())
                 {
                     Employe employe = new Employe(dialog.getNom(), dialog.getPrenom(), dialog.getLogin(), dialog.getMdp(), dialog.getFonction());
-                    DefaultTableModel tableModel = (DefaultTableModel) tableEmployes.getModel();
-                    Vector ligne = new Vector();
-                    ligne.add(Integer.valueOf(employe.getNumero()));
-                    ligne.add(dialog.getNom());
-                    ligne.add(dialog.getPrenom());
-                    ligne.add(dialog.getFonction());
-                    tableModel.addRow(ligne);
                     Garage.getInstance().ajouteEmploye(employe);
+                    afficheEmployes();
                 }
             }
         });
@@ -288,40 +275,57 @@ public class JFrameGarage extends JFrame
                 if(dialog.isOk())
                 {
                     int id = dialog.getId();
-
                     DefaultTableModel tableModel = (DefaultTableModel) tableEmployes.getModel();
-                    // parcour la Jtable
-                    for (int i = 0;i<tableModel.getRowCount();i++)
+                    AtomicBoolean aUnContrat = new AtomicBoolean(false);
+                    try
                     {
-                        if(tableModel.getValueAt(i,0).equals(id))
-                        {
-                            ok = true;
-                            JDialogConfirmation dialogConfirmation = new JDialogConfirmation("Voulez-vous vraiment supprimer cet employé ?");
-                            dialogConfirmation.pack();
-                            dialogConfirmation.setLocationRelativeTo(null);
-                            dialogConfirmation.setVisible(true);
-                            if(dialogConfirmation.isOk())
+                        Garage.getInstance().getContrats().forEach(c ->{
+                            if(c.getEmployeRef() == id)
                             {
-                                tableModel.removeRow(i);
-                                i = tableModel.getRowCount()+1; // met fin à la boucle
-                                dialogConfirmation.setVisible(false);
+                                aUnContrat.set(true);
+                                throw new RuntimeException();
                             }
-                            else
+                        });
+                    }
+                    catch(Exception exc)
+                    {
+
+                    }
+                    if(!aUnContrat.get())
+                    {
+                        // parcour la Jtable
+                        for (int i = 0;i<tableModel.getRowCount();i++)
+                        {
+                            if(tableModel.getValueAt(i,0).equals(id))
                             {
-                                dialogConfirmation.setVisible(false);
+                                ok = true;
+                                JDialogConfirmation dialogConfirmation = new JDialogConfirmation("Voulez-vous vraiment supprimer cet employé ?");
+                                dialogConfirmation.pack();
+                                dialogConfirmation.setLocationRelativeTo(null);
+                                dialogConfirmation.setVisible(true);
+                                if(dialogConfirmation.isOk())
+                                {
+                                    Garage.getInstance().getEmployes().remove(tableModel.getValueAt(i, 0));
+                                    tableModel.removeRow(i);
+                                    i = tableModel.getRowCount()+1; // met fin à la boucle
+                                    dialogConfirmation.setVisible(false);
+                                }
+                                else
+                                {
+                                    dialogConfirmation.setVisible(false);
+                                }
+
                             }
 
                         }
-
+                        if(!ok)
+                        {
+                            JDialogMessage dialogMessage = new JDialogMessage("L'id encodé n'existe pas !");
+                            dialogMessage.pack();
+                            dialogMessage.setLocationRelativeTo(null);
+                            dialogMessage.setVisible(true);
+                        }
                     }
-                    if(!ok)
-                    {
-                        JDialogMessage dialogMessage = new JDialogMessage("L'id encodé n'existe pas !");
-                        dialogMessage.pack();
-                        dialogMessage.setLocationRelativeTo(null);
-                        dialogMessage.setVisible(true);
-                    }
-
                 }
             }
         });
@@ -329,21 +333,48 @@ public class JFrameGarage extends JFrame
         menuItemSupprimeEmployeSelec.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(tableEmployes.isRowSelected(tableEmployes.getSelectedRow()))
+                int index = tableEmployes.getSelectedRow();
+                AtomicBoolean aUnContrat = new AtomicBoolean(false);
+                if(tableEmployes.isRowSelected(index))
                 {
-                    JDialogConfirmation dialogConfirmation = new JDialogConfirmation("Êtes-vous sur de vouloir supprimer cet employé ?");
-                    dialogConfirmation.pack();
-                    dialogConfirmation.setLocationRelativeTo(null);
-                    dialogConfirmation.setVisible(true);
-                    if(dialogConfirmation.isOk())
+                    try
                     {
-                        DefaultTableModel tableModel = (DefaultTableModel) tableEmployes.getModel();
-                        tableModel.removeRow(tableEmployes.getSelectedRow());
-                        dialogConfirmation.setVisible(false);
+                        Garage.getInstance().getContrats().forEach(c -> {
+                            if(c.getEmployeRef() == Garage.getInstance().getEmployes().get(index).getNumero())
+                            {
+                                aUnContrat.set(true);
+                                throw new RuntimeException(); // Remplace le break pour sortir de la boucle
+                            }
+                        });
+                    }
+                    catch(Exception exc)
+                    {
+
+                    }
+                    if(!aUnContrat.get())
+                    {
+                        JDialogConfirmation dialogConfirmation = new JDialogConfirmation("Êtes-vous sur de vouloir supprimer cet employé ?");
+                        dialogConfirmation.pack();
+                        dialogConfirmation.setLocationRelativeTo(null);
+                        dialogConfirmation.setVisible(true);
+                        if(dialogConfirmation.isOk())
+                        {
+                            DefaultTableModel tableModel = (DefaultTableModel) tableEmployes.getModel();
+                            Garage.getInstance().getEmployes().remove(index);
+                            tableModel.removeRow(tableEmployes.getSelectedRow());
+                            dialogConfirmation.setVisible(false);
+                        }
+                        else
+                        {
+                            dialogConfirmation.setVisible(false);
+                        }
                     }
                     else
                     {
-                        dialogConfirmation.setVisible(false);
+                        JDialogMessage dialogMessage = new JDialogMessage("Vous ne pouvez pas supprimer un employé avec un contrat actif");
+                        dialogMessage.pack();
+                        dialogMessage.setLocationRelativeTo(null);
+                        dialogMessage.setVisible(true);
                     }
                 }
                 else
@@ -355,10 +386,6 @@ public class JFrameGarage extends JFrame
                 }
             }
         });
-
-
-
-
         /*Object[][] data = new Object[][]{
                 {Integer.valueOf(1), "Wagner", "Jean-Marc", "Vendeur"},
                 {Integer.valueOf(2), "Charlet", "Christophe", "Administratif"}
@@ -379,7 +406,7 @@ public class JFrameGarage extends JFrame
         DefaultTableModel tableModel = (DefaultTableModel) tableEmployes.getModel();
         String[] nomsColonnes = { "Num", "Nom", "Prénom", "Fonction"};
         tableModel.setColumnIdentifiers(nomsColonnes);
-        Vector ligne = new Vector();
+        /*Vector ligne = new Vector();
         ligne.add(Integer.valueOf(1));
         ligne.add("Wagner");
         ligne.add("Jean-Marc");
@@ -390,7 +417,7 @@ public class JFrameGarage extends JFrame
         ligne.add("Charlet");
         ligne.add("Christophe");
         ligne.add("Administratif");
-        tableModel.addRow(ligne);
+        tableModel.addRow(ligne);*/
         //tableEmployes.setModel(tableModel);
         jScrollPaneEmployes.setViewportView(tableEmployes); // permet de voir le tableauu dans l'interfae
 
@@ -399,12 +426,12 @@ public class JFrameGarage extends JFrame
         tableModel = (DefaultTableModel) tableClients.getModel();
         String[] nomsColonnes2 = { "Num", "Nom", "Prénom", "GSM"};
         tableModel.setColumnIdentifiers(nomsColonnes2);
-        ligne = new Vector();
+        /*Vector ligne = new Vector();
         ligne.add(Integer.valueOf(1));
         ligne.add("Wagner");
         ligne.add("Jean-Marc");
         ligne.add("0478/75.53.36");
-        tableModel.addRow(ligne);
+        tableModel.addRow(ligne);*/
         //tableClients.setModel(tableModel);
         jScrollPaneClients.setViewportView(tableClients); // permet de voir le tableauu dans l'interfae
 
@@ -477,15 +504,12 @@ public class JFrameGarage extends JFrame
             @Override
             public void actionPerformed(ActionEvent e){
                 int index =  tableOptionsChoisies.getSelectedRow();
-                if(index == -1)
-                    return;
-                Option option = Garage.getInstance().getOptions().get(index);
-                DefaultTableModel model = (DefaultTableModel) tableOptionsChoisies.getModel();
-                Garage.getProjetEnCours().retireOption(index);
-                System.out.println("index : " + index);
-                Garage.getProjetEnCours().afficheOptions();
-                model.removeRow(index);
-                updatePrixAvecOptions();
+                if(index != -1)
+                {
+                    Garage.getProjetEnCours().retireOption(index);
+                    afficheOptions();
+                    System.out.println(index);
+                }
             }
         });
 
@@ -512,12 +536,13 @@ public class JFrameGarage extends JFrame
             @Override
             public void actionPerformed(ActionEvent e){
                 Garage.setProjetEnCours(new Voiture("nom", null));
-                DefaultTableModel model = (DefaultTableModel) tableOptionsChoisies.getModel();
-                model.setRowCount(0);
-                textFieldModele.setText("");
-                textFieldNomProjet.setText(Garage.getProjetEnCours().getNom());
-                textFieldPrixDeBase.setText("");
-                radioButtonEssence.setSelected(true);
+//                DefaultTableModel model = (DefaultTableModel) tableOptionsChoisies.getModel();
+//                model.setRowCount(0);
+//                textFieldModele.setText("");
+//                textFieldNomProjet.setText(Garage.getProjetEnCours().getNom());
+//                textFieldPrixDeBase.setText("");
+//                radioButtonEssence.setSelected(true);
+                afficheProjetEnCours();
             }
         });
 
@@ -543,29 +568,7 @@ public class JFrameGarage extends JFrame
                 {
                     Garage.getProjetEnCours().setNom(textFieldNomProjet.getText());
                     Garage.LoadProjetEnCours();
-                    Voiture v = Garage.getProjetEnCours();
-                    textFieldModele.setText(v.getModele().getNom());
-                    textFieldPrixDeBase.setText(String.valueOf(v.getModele().getPrixDeBase()));
-                    textFieldPuissance.setText(String.valueOf(v.getModele().getPuissance()));
-                    if (v.getModele().getMoteur().equals("Essence")) radioButtonEssence.setSelected(true);
-                    if (v.getModele().getMoteur().equals("Diesel")) radioButtonDiesel.setSelected(true);
-                    if (v.getModele().getMoteur().equals("Electrique")) radioButtonElectrique.setSelected(true);
-                    if (v.getModele().getMoteur().equals("Hybride")) radioButtonHybride.setSelected(true);
-                    DefaultTableModel model = (DefaultTableModel) tableOptionsChoisies.getModel();
-                    model.setRowCount(0);
-                    for(int i = 0; i < 5; i++)
-                    {
-                        Option o = v.getOption(i);
-                        if(o != null) {
-                            Vector ligne = new Vector();
-                            ligne.add(o.getCode());
-                            ligne.add(o.getIntitule());
-                            ligne.add(o.getPrix());
-                            model.addRow(ligne);
-                            updatePrixAvecOptions();
-                        }
-                    }
-                    updatePrixAvecOptions();
+                    afficheProjetEnCours();
                 }
                 catch(Exception exc)
                 {
@@ -580,17 +583,48 @@ public class JFrameGarage extends JFrame
                 DefaultTableModel tableContratsModel = (DefaultTableModel) tableContrats.getModel();
                 int indexClient = tableClients.getSelectedRow();
                 int indexEmploye = tableEmployes.getSelectedRow();
-                if(indexClient != -1 && indexEmploye != -1)
+                String nom = textFieldNomProjet.getText();
+                File check = new File("Data/Projets/" + nom + ".car");
+                if(indexClient != -1 && indexEmploye != -1 && check.exists()) // Vérifie si on a bien sélectionné et si le projet du contrat existe
                 {
-                    Garage.getProjetEnCours().setNom(textFieldNomProjet.getText());
+                    AtomicBoolean memeContrat = new AtomicBoolean(false);
+                    Garage.getProjetEnCours().setNom(nom);
                     Contrat c = new Contrat(Garage.getInstance().getClients().get(indexClient), Garage.getInstance().getEmployes().get(indexEmploye), Garage.getProjetEnCours().getNom());
-                    Garage.getInstance().ajouteContrat(c);
-                    Vector ligne = new Vector();
-                    ligne.add(c.getNumero());
-                    ligne.add(c.getClientRef());
-                    ligne.add(c.getEmployeRef());
-                    ligne.add(c.getNom());
-                    tableContratsModel.addRow(ligne);
+                    Garage.getInstance().getContrats().forEach(contrat -> {
+                        if(contrat.equalsButNum(c))
+                        {
+                            memeContrat.set(true);
+                            System.out.println("Meme contrat !");
+                        }
+                        else
+                        {
+                            System.out.println(contrat.toString() + "!=" + c.toString());
+                        }
+                    });
+                    if(!memeContrat.get())
+                    {
+                        Garage.getInstance().ajouteContrat(c);
+                        Vector ligne = new Vector();
+                        ligne.add(c.getNumero());
+                        ligne.add(c.getClientRef());
+                        ligne.add(c.getEmployeRef());
+                        ligne.add(c.getNom());
+                        tableContratsModel.addRow(ligne);
+                    }
+                }
+                else if(indexClient == -1 && indexEmploye == -1)
+                {
+                    JDialogMessage dialogMessage = new JDialogMessage("Veuillez choisir un employé et un client");
+                    dialogMessage.pack();
+                    dialogMessage.setLocationRelativeTo(null);
+                    dialogMessage.setVisible(true);
+                }
+                else
+                {
+                    JDialogMessage dialogMessage = new JDialogMessage("Veuillez enregistrer un projet pour créer un contrat");
+                    dialogMessage.pack();
+                    dialogMessage.setLocationRelativeTo(null);
+                    dialogMessage.setVisible(true);
                 }
             }
         });
@@ -598,14 +632,36 @@ public class JFrameGarage extends JFrame
         supprimerContratButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                DefaultTableModel model = (DefaultTableModel) tableEmployes.getModel();
-                Vector ligne = new Vector();
-                Employe emp = new Employe("Evrard", "Nathan", "wesh", "zebi", "cool");
-                ligne.add(emp.getNumero());
-                ligne.add(emp.getNom());
-                ligne.add(emp.getPrenom());
-                ligne.add(emp.getFonction());
-                model.addRow(ligne);
+                DefaultTableModel model = (DefaultTableModel) tableContrats.getModel();
+                int index = tableContrats.getSelectedRow();
+                if(index != -1)
+                {
+                    model.removeRow(index);
+                    Garage.getInstance().getContrats().remove(index);
+                    Garage.getInstance().getContrats().forEach(x -> System.out.println(x.toString()));
+                }
+            }
+        });
+
+        visualiserVoitureButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int index = tableContrats.getSelectedRow();
+                if(index != -1)
+                {
+                    Contrat c = Garage.getInstance().getContrats().get(index);
+                    Garage.setProjetEnCours(new Voiture(c.getNom(), null));
+                    try
+                    {
+                        Garage.LoadProjetEnCours();
+                        afficheProjetEnCours();
+                    }
+                    catch(Exception exc)
+                    {
+                        System.out.println(exc.getMessage());
+                    }
+
+                }
             }
         });
 
@@ -615,9 +671,87 @@ public class JFrameGarage extends JFrame
         comboBoxModelesDisponibles.addItem(new Modele("Andrew", 100, "Diesel", 3600));
     }
 
+    private void afficheProjetEnCours()
+    {
+        Voiture v = Garage.getProjetEnCours();
+        textFieldModele.setText(v.getModele().getNom());
+        textFieldPrixDeBase.setText(String.valueOf(v.getModele().getPrixDeBase()));
+        textFieldPuissance.setText(String.valueOf(v.getModele().getPuissance()));
+        if (v.getModele().getMoteur().equals("Essence")) radioButtonEssence.setSelected(true);
+        if (v.getModele().getMoteur().equals("Diesel")) radioButtonDiesel.setSelected(true);
+        if (v.getModele().getMoteur().equals("Electrique")) radioButtonElectrique.setSelected(true);
+        if (v.getModele().getMoteur().equals("Hybride")) radioButtonHybride.setSelected(true);
+        DefaultTableModel model = (DefaultTableModel) tableOptionsChoisies.getModel();
+        model.setRowCount(0);
+        for(int i = 0; i < 5; i++)
+        {
+            Option o = v.getOption(i);
+            if(o != null) {
+                Vector ligne = new Vector();
+                ligne.add(o.getCode());
+                ligne.add(o.getIntitule());
+                ligne.add(o.getPrix());
+                model.addRow(ligne);
+            }
+        }
+        updatePrixAvecOptions();
+    }
+
+    private void afficheOptions()
+    {
+        DefaultTableModel model = (DefaultTableModel) tableOptionsChoisies.getModel();
+        model.setRowCount(0);
+        for(int i = 0; i < 5; i++)
+        {
+            Option o = Garage.getProjetEnCours().getOption(i);
+            if(o != null)
+            {
+                Vector ligne = new Vector();
+                ligne.add(o.getCode());
+                ligne.add(o.getIntitule());
+                ligne.add(o.getPrix());
+                model.addRow(ligne);
+            }
+        }
+        updatePrixAvecOptions();
+    }
+
+    private void afficheClients()
+    {
+        DefaultTableModel model = (DefaultTableModel) tableClients.getModel();
+        model.setRowCount(0);
+        Garage.getInstance().getClients().forEach(e -> {
+            Vector ligne = new Vector();
+            ligne.add(Integer.valueOf(e.getNumero()));
+            ligne.add(e.getNom());
+            ligne.add(e.getPrenom());
+            ligne.add(e.getGsm());
+            model.addRow(ligne);
+        });
+    }
+
+    private void afficheEmployes()
+    {
+        DefaultTableModel model = (DefaultTableModel) tableEmployes.getModel();
+        model.setRowCount(0);
+        Garage.getInstance().getEmployes().forEach(e -> {
+            Vector ligne = new Vector();
+            ligne.add(Integer.valueOf(e.getNumero()));
+            ligne.add(e.getNom());
+            ligne.add(e.getPrenom());
+            ligne.add(e.getFonction());
+            model.addRow(ligne);
+        });
+    }
+
     private void updatePrixAvecOptions()
     {
         textFieldPrixAvecOptions.setText(String.valueOf(Garage.getProjetEnCours().getPrix()));
+    }
+    public static String capitalize(String str)
+    {
+        if (str == null || str.length() == 0) return str;
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
     public static void main(String[] args) {
         //FlatLightLaf.setup();

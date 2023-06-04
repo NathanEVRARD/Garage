@@ -1,16 +1,12 @@
 package Garage;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Vector;
-import java.util.Scanner;
+import java.util.*;
 
 public class Garage
 {
-    List<Employe> employes;
-    List<Client> clients;
+    ArrayList<Employe> employes;
+    ArrayList<Client> clients;
     Vector<Modele> modeles;
     Vector<Option> options;
     Vector<Contrat> contrats;
@@ -251,23 +247,25 @@ public class Garage
     public void ajouteContrat(Contrat c)
     {
         contrats.add(c);
+        Contrat.IncrementINumero();
     }
 
     public void ajouteClient(Client c)
     {
         clients.add(c);
+        Collections.sort(clients);
     }
 
     public void ajouteEmploye(Employe e)
     {
         employes.add(e);
+        Collections.sort(employes);
     }
-
-    public void retireOption(Option o) {options.remove(o);}
     public Vector<Option> getOptions()
     {
         return options;
     }
     public List<Client> getClients(){return clients;}
     public List<Employe> getEmployes(){return employes;}
+    public Vector<Contrat> getContrats(){return contrats;}
 }

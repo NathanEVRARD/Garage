@@ -1,6 +1,6 @@
 package Garage;
 
-public class Personne
+public class Personne implements Comparable<Personne>
 {
     private String nom;
     private String prenom;
@@ -19,12 +19,12 @@ public class Personne
 
     public void setNom(String n)
     {
-        this.nom = n;
+        this.nom = n.toUpperCase();
     }
 
     public void setPrenom(String p)
     {
-        this.prenom = p;
+        this.prenom = capitalize(p);
     }
 
     public String getNom()
@@ -49,5 +49,19 @@ public class Personne
             return true;
         else
             return false;
+    }
+
+    public static String capitalize(String str)
+    {
+        if (str == null || str.length() == 0) return str;
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    @Override
+    public int compareTo(Personne p) {
+        if(this.getNom() != p.getNom())
+            return this.getNom().compareTo(p.getNom());
+        else
+            return this.getPrenom().compareTo(p.getPrenom());
     }
 }

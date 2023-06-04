@@ -63,6 +63,7 @@ public class Voiture implements Serializable {
         for(i = 0; i < 5 && options[i] != null && options[i].getCode() != op.getCode(); i++);
         if(options[i] == null && i < 5)
         {
+            System.out.println("Option ajoutée à l'index : " + i);
             options[i] = op;
             return true;
         }
@@ -72,7 +73,16 @@ public class Voiture implements Serializable {
     public void retireOption(int i)
     {
         if(i >= 0 && i <= 4 && options[i] != null)
+        {
+            System.out.println("Option supprimée");
             options[i] = null;
+        }
+        while(i < 4)
+        {
+            options[i] = options[i+1];
+            i++;
+        }
+        options[i] = null;
     }
 
     public float getPrix()
