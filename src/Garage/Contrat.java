@@ -21,10 +21,11 @@ public class Contrat implements IEstIdentifiable, Serializable
         setNom(n);
     }
 
-    public Contrat(int c, int e)
+    public Contrat(int c, int e, String n)
     {
         setClientRef(c);
         setEmployeRef(e);
+        setNom(n);
         setNumero(Inumero);
     }
 

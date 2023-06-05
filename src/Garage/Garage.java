@@ -66,11 +66,32 @@ public class Garage
 
     public void SaveGarage()
     {
+        SaveClients();
+        SaveEmployes();
+        SaveContrats();
+    }
+
+    public void LoadGarage()
+    {
         try
         {
-            FileOutputStream fileOut = new FileOutputStream("Data" + File.separator + "GarageSerialized" + File.separator + "Garage.gar");
+            LoadClientsSer();
+            LoadEmployesSer();
+            LoadContratsSer();
+        }
+        catch(ClassNotFoundException e)
+        {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void SaveClients()
+    {
+        try
+        {
+            FileOutputStream fileOut = new FileOutputStream("Data" + File.separator + "GarageSerialized" + File.separator + "clients.ser");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
-            out.writeObject(instance);
+            out.writeObject(getClients());
             out.close();
             fileOut.close();
         }
@@ -79,6 +100,122 @@ public class Garage
             System.out.print(e.getMessage());
         }
     }
+    public void SaveEmployes()
+    {
+        try
+        {
+            FileOutputStream fileOut = new FileOutputStream("Data" + File.separator + "GarageSerialized" + File.separator + "employes.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(getEmployes());
+            out.close();
+            fileOut.close();
+        }
+        catch(IOException e)
+        {
+            System.out.print(e.getMessage());
+        }
+    }
+
+    public void SaveContrats()
+    {
+        try
+        {
+            FileOutputStream fileOut = new FileOutputStream("Data" + File.separator + "GarageSerialized" + File.separator + "contrats.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(getContrats());
+            out.close();
+            fileOut.close();
+        }
+        catch(IOException e)
+        {
+            System.out.print(e.getMessage());
+        }
+    }
+
+    public void SaveProjetEnCoursSer()
+    {
+        try
+        {
+            FileOutputStream fileOut = new FileOutputStream("Data" + File.separator + "GarageSerialized" + File.separator + "projetEnCours.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(getProjetEnCours());
+            out.close();
+            fileOut.close();
+        }
+        catch(IOException e)
+        {
+            System.out.print(e.getMessage());
+        }
+    }
+
+    public void LoadContratsSer() throws ClassNotFoundException
+    {
+        try
+        {
+            FileInputStream fileIn = new FileInputStream("Data" + File.separator + "GarageSerialized" + File.separator + "contrats.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            contrats = (Vector<Contrat>)in.readObject();
+            in.close();
+            fileIn.close();
+        }
+        catch(IOException e)
+        {
+            System.out.print(e.getMessage());
+        }
+    }
+
+    public void LoadClientsSer() throws ClassNotFoundException
+    {
+        try
+        {
+            FileInputStream fileIn = new FileInputStream("Data" + File.separator + "GarageSerialized" + File.separator + "clients.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            clients = (ArrayList<Client>)in.readObject();
+            in.close();
+            fileIn.close();
+        }
+        catch(IOException e)
+        {
+            System.out.print(e.getMessage());
+        }
+    }
+
+    public void LoadEmployesSer() throws ClassNotFoundException
+    {
+        try
+        {
+            FileInputStream fileIn = new FileInputStream("Data" + File.separator + "GarageSerialized" + File.separator + "employes.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            employes = (ArrayList<Employe>)in.readObject();
+            in.close();
+            fileIn.close();
+        }
+        catch(IOException e)
+        {
+            System.out.print(e.getMessage());
+        }
+    }
+
+    public void LoadProjetEnCoursSer()
+    {
+        try
+        {
+            FileInputStream fileIn = new FileInputStream("Data" + File.separator + "GarageSerialized" + File.separator + "projetEnCours.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            setProjetEnCours((Voiture)in.readObject());
+            in.close();
+            fileIn.close();
+        }
+        catch(IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
+        catch(ClassNotFoundException ec)
+        {
+            System.out.println(ec.getMessage());
+        }
+    }
+
     public static void SaveProjetEnCours() throws IOException
     {
         String nom = getProjetEnCours().getNom();
@@ -104,47 +241,11 @@ public class Garage
         in.close();
         fileIn.close();
     }
-
-    public void Load()
-    {
-        try
-        {
-            LoadClients();
-            LoadModeles();
-            LoadContrats();
-            LoadEmployes();
-            LoadOptions();
-        }
-        catch(FileNotFoundException e)
-        {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    public void LoadClients() throws FileNotFoundException
-    {
-        File fileClients = new File("CSV" + File.separator +"clients.csv");
-        Scanner scClients = new Scanner(fileClients);
-        scClients.useDelimiter(";|\n");
-        while(scClients.hasNext())
-        {
-            String nom = scClients.next();
-            String prenom = scClients.next();
-            int num = Integer.parseInt(scClients.next());
-            String gsm = scClients.next();
-            Client c = new Client(nom, prenom, gsm);
-            c.setNumero(num);
-            ajouteClient(c);
-        }
-        scClients.close();
-    }
-
     public void LoadModeles() throws FileNotFoundException
     {
         File fileModeles = new File("Data" + File.separator + "CSV" + File.separator + "modeles.csv");
         Scanner scModeles = new Scanner(fileModeles);
         scModeles.useDelimiter(";|\n");
-        scModeles.nextLine();
         while(scModeles.hasNext())
         {
             String nom = scModeles.next();
@@ -164,59 +265,15 @@ public class Garage
         File fileOptions = new File("Data" + File.separator + "CSV" + File.separator+ "options.csv");
         Scanner scOptions = new Scanner(fileOptions);
         scOptions.useDelimiter(";|\n");
-        scOptions.nextLine();
         while(scOptions.hasNext())
         {
             String code = scOptions.next();
             String intitule = scOptions.next();
             float prix = Float.parseFloat(scOptions.next());
-
             Option o = new Option(code, intitule, prix);
             ajouteOption(o);
         }
         scOptions.close();
-    }
-
-    public void LoadContrats() throws FileNotFoundException
-    {
-        File fileContrats = new File("CSV" + File.separator + "contrats.csv");
-        Scanner scContrats = new Scanner(fileContrats);
-        int Inumero = Integer.parseInt(scContrats.nextLine());
-        Contrat.setInumero(Inumero);
-        scContrats.useDelimiter(";|\n");
-
-        while(scContrats.hasNext())
-        {
-            int num = Integer.parseInt(scContrats.next());
-            String nom = scContrats.next();
-            int clientRef = Integer.parseInt(scContrats.next());
-             int employeRef = Integer.parseInt(scContrats.next());
-
-            Contrat c = new Contrat(num, clientRef, employeRef);
-            ajouteContrat(c);
-        }
-        scContrats.close();
-    }
-
-    public void LoadEmployes() throws FileNotFoundException
-    {
-        File fileEmployes = new File("CSV" + File.separator + "employes.csv");
-        Scanner scEmployes = new Scanner(fileEmployes);
-        scEmployes.useDelimiter(";|\n");
-
-        while(scEmployes.hasNext())
-        {
-            String nom = scEmployes.next();
-            String prenom = scEmployes.next();
-            int num = Integer.parseInt(scEmployes.next());
-            String login = scEmployes.next();
-            String fonction = scEmployes.next();
-            String mdp = scEmployes.next();
-
-            Employe e = new Employe(nom, prenom, login, mdp, fonction, num);
-            ajouteEmploye(e);
-        }
-        scEmployes.close();
     }
 
     public void SaveModeles() throws IOException
@@ -246,6 +303,36 @@ public class Garage
             }
         });
         writer.close();
+    }
+
+    public void SaveInumeros()
+    {
+        try
+        {
+            FileWriter writer = new FileWriter("Data" + File.separator + "GarageSerialized" + File.separator + "inumeros.data");
+            writer.write(Intervenant.getInumero());
+            writer.write(Contrat.getInumero());
+            writer.close();
+        }
+        catch(IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void LoadInumeros()
+    {
+        try
+        {
+            FileReader reader = new FileReader("Data" + File.separator + "GarageSerialized" + File.separator + "inumeros.data");
+            Intervenant.setInumero(reader.read());
+            Contrat.setInumero(reader.read());
+            reader.close();
+        }
+        catch(IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
     }
 
     public void ajouteOption(Option o)

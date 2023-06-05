@@ -23,7 +23,8 @@ public abstract class Intervenant extends Personne implements IEstIdentifiable, 
     {
         return this.numero;
     }
-
+    public static int getInumero(){return Inumero;}
+    public static void setInumero(int i){Inumero = i;}
     public void setNumero(int n)
     {
         this.numero = n;

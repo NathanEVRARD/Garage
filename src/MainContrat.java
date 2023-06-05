@@ -8,7 +8,7 @@ import java.io.IOException;
 public class MainContrat {
     public static void main(String[] args)
     {
-        /* Test du constructeur d'initialisation */
+        /* Test du constructeur d'initialisation
 
         Client c = new Client("Nathan", "Evrard","0438445483");
         Client c2 = new Client("Adrien","Feyen","0458542949");
@@ -20,16 +20,16 @@ public class MainContrat {
         Contrat co2 = new Contrat(c2.getNumero(),e2.getNumero());
         Contrat co3 = new Contrat(8,c2.getNumero(),e2.getNumero());
 
-        /* Test de la fonction ToString() */
+        /* Test de la fonction ToString()
         System.out.println(co.toString() + "\n");
         System.out.println(co2.toString() + "\n");
         System.out.println(co3.toString() + "\n");
 
 
-        /* Test de la fonction equals() */
+        /* Test de la fonction equals()
         System.out.println("Est-ce que les 2 client sont égaux ? " + co.equals(co2) + "\n");
 
-        /* Test des getters */
+        /* Test des getters
         System.out.println("Test des getters : Affichage du client. \n");
         System.out.println(co.getNom());
         System.out.println(co.getClientRef());
@@ -38,7 +38,7 @@ public class MainContrat {
         System.out.println(co.getInumero());
 
 
-        /* Test des setters */
+        /* Test des setters
         System.out.println("\nTest des setters : modification du client avec les setters.");
         co.setNom(e3.getNom()+c2.getNom());
         co.setNumero(30);
@@ -49,7 +49,7 @@ public class MainContrat {
         System.out.println(co.toString() + "\n");
 
 
-        /* Test de la fonction Save() */
+        /* Test de la fonction Save()
 
         try
         {
@@ -59,8 +59,6 @@ public class MainContrat {
         }
         catch (IOException e) {
             e.printStackTrace();
-        }
-
-
+        }*/
     }
 }
