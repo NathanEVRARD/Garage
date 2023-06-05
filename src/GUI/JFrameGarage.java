@@ -118,29 +118,6 @@ public class JFrameGarage extends JFrame
         JMenuItem menuItemNouvelleOption = new JMenuItem("Nouvelle Option");
         menuVoiture.add(menuItemNouvelleOption);
 
-        // Gestion du login et logout + reset mdp
-        // créer le super admin au lancement ?
-
-        if(Garage.getInstance().getIdConnected() == -1)
-        {
-            menuItemLogout.setEnabled(false); // car personne n'est connecté au lancement de l'appli
-            menuClients.setEnabled(false); // car personne n'est connecté au lancement de l'appli
-            //menuEmployes.setEnabled(false); // car personne n'est connecté au lancement de l'appli
-            menuVoiture.setEnabled(false); // car personne n'est connecté au lancement de l'appli
-            menuItemResetMotDePasse.setEnabled(false); // car personne n'est connecté au lancement de l'appli
-            buttonAccorderReduction.setEnabled(false);
-            buttonChoisirModele.setEnabled(false);
-            buttonChoisirOption.setEnabled(false);
-            buttonSupprimerOption.setEnabled(false);
-            buttonNouveauProjet.setEnabled(false);
-            buttonOuvrirProjet.setEnabled(false);
-            buttonEnregistrerProjet.setEnabled(false);
-            // ajouter les boutons contrats.
-            radioButtonDiesel.setEnabled(false);
-            radioButtonElectrique.setEnabled(false);
-            radioButtonEssence.setEnabled(false);
-            radioButtonHybride.setEnabled(false);
-        }
 
         addWindowListener(new WindowListener() {
 
@@ -200,6 +177,50 @@ public class JFrameGarage extends JFrame
         });
 
 
+        // Gestion du login et logout + reset mdp
+        File f = new File("Admin.properties");
+        if(f.isFile())
+        {
+            // besoin de rien faire on vérifie juste si le fichier admin.properties existe
+        }
+        else
+        {
+            Properties p=new Properties();
+
+            p.setProperty("Id","0");
+            p.setProperty("Login","SUPERADMIN");
+            p.setProperty("Mdp","ADMIN1");
+
+            try {
+                p.store(new FileWriter("Admin.properties"),"Enregistrement du super administrateur");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+
+        if(Garage.getInstance().getIdConnected() == -1)
+        {
+            menuItemLogout.setEnabled(false);
+            menuClients.setEnabled(false);
+            menuEmployes.setEnabled(false);
+            menuVoiture.setEnabled(false);
+            menuItemResetMotDePasse.setEnabled(false);
+            buttonAccorderReduction.setEnabled(false);
+            buttonChoisirModele.setEnabled(false);
+            buttonChoisirOption.setEnabled(false);
+            buttonSupprimerOption.setEnabled(false);
+            buttonNouveauProjet.setEnabled(false);
+            buttonOuvrirProjet.setEnabled(false);
+            buttonEnregistrerProjet.setEnabled(false);
+            nouveauContratButton.setEnabled(false);
+            supprimerContratButton.setEnabled(false);
+            visualiserVoitureButton.setEnabled(false);
+            radioButtonDiesel.setEnabled(false);
+            radioButtonElectrique.setEnabled(false);
+            radioButtonEssence.setEnabled(false);
+            radioButtonHybride.setEnabled(false);
+        }
         //login
         menuItemLogin.addActionListener(new ActionListener() {
             @Override
@@ -209,89 +230,121 @@ public class JFrameGarage extends JFrame
 
                 if(dialog.isOk())
                 {
-                    for(int i = 0;i<Garage.getInstance().getEmployes().size();i++)
+                    if(dialog.getLogin().equals("SUPERADMIN"))
                     {
-                        if(Garage.getInstance().getEmployes().get(i).getLogin().equals(dialog.getLogin()) &&  Garage.getInstance().getEmployes().get(i).getMdp().equals(dialog.getMotDePasse()))
+
+                        // récupère les données dans Admin.properties
+                        FileReader reader= null;
+                        try {
+                            reader = new FileReader("Admin.properties");
+                        } catch (FileNotFoundException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        Properties p=new Properties();
+                        try {
+                            p.load(reader);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+
+                        if(p.getProperty("Mdp").equals(dialog.getMotDePasse()))
                         {
-                            afficheClients();
-                            afficheEmployes();
-                            afficheContrats();
                             setTitle("Application Garage JAVA - "+dialog.getLogin());
                             JDialogMessage dialogMessage = new JDialogMessage("Connexion réussie !");
                             dialogMessage.pack();
                             dialogMessage.setLocationRelativeTo(null);
                             dialogMessage.setVisible(true);
-                            if(Garage.getInstance().getEmployes().get(i).getFonction().equals("Administratif"))
-                            {
-                                menuItemLogin.setEnabled(false);
-                                menuItemLogout.setEnabled(true);
-                                menuClients.setEnabled(false);
-                                menuEmployes.setEnabled(true);
-                                menuVoiture.setEnabled(false);
-                                menuItemResetMotDePasse.setEnabled(true);
-                                buttonAccorderReduction.setEnabled(false);
-                                buttonChoisirModele.setEnabled(false);
-                                buttonChoisirOption.setEnabled(false);
-                                buttonSupprimerOption.setEnabled(false);
-                                buttonNouveauProjet.setEnabled(false);
-                                buttonOuvrirProjet.setEnabled(false);
-                                buttonEnregistrerProjet.setEnabled(false);
-                                // ajouter les boutons contrats.
-                                radioButtonDiesel.setEnabled(false);
-                                radioButtonElectrique.setEnabled(false);
-                                radioButtonEssence.setEnabled(false);
-                                radioButtonHybride.setEnabled(false);
+                            Garage.getInstance().setIdConnected(0);
 
-                            }
-                            else
+                            menuItemLogin.setEnabled(false);
+                            menuItemLogout.setEnabled(true);
+                            menuClients.setEnabled(true);
+                            menuEmployes.setEnabled(true);
+                            menuVoiture.setEnabled(true);
+                            menuItemResetMotDePasse.setEnabled(true);
+                            buttonAccorderReduction.setEnabled(true);
+                            buttonChoisirModele.setEnabled(true);
+                            buttonChoisirOption.setEnabled(true);
+                            buttonSupprimerOption.setEnabled(true);
+                            buttonNouveauProjet.setEnabled(true);
+                            buttonOuvrirProjet.setEnabled(true);
+                            buttonEnregistrerProjet.setEnabled(true);
+                            nouveauContratButton.setEnabled(true);
+                            supprimerContratButton.setEnabled(true);
+                            visualiserVoitureButton.setEnabled(true);
+                            radioButtonDiesel.setEnabled(true);
+                            radioButtonElectrique.setEnabled(true);
+                            radioButtonEssence.setEnabled(true);
+                            radioButtonHybride.setEnabled(true);
+                        }
+                        else
+                        {
+                            JDialogMessage dialogMessage = new JDialogMessage("Connexion échoué !");
+                            dialogMessage.pack();
+                            dialogMessage.setLocationRelativeTo(null);
+                            dialogMessage.setVisible(true);
+                        }
+                    }
+                    else
+                    {
+                        for(int i = 0;i<Garage.getInstance().getEmployes().size();i++)
+                        {
+                            if(Garage.getInstance().getEmployes().get(i).getLogin().equals(dialog.getLogin()) &&  Garage.getInstance().getEmployes().get(i).getMdp().equals(dialog.getMotDePasse()))
                             {
-                                if(Garage.getInstance().getEmployes().get(i).getFonction().equals("Vendeur"))
+                                setTitle("Application Garage JAVA - "+dialog.getLogin());
+                                JDialogMessage dialogMessage = new JDialogMessage("Connexion réussie !");
+                                dialogMessage.pack();
+                                dialogMessage.setLocationRelativeTo(null);
+                                dialogMessage.setVisible(true);
+                                if(Garage.getInstance().getEmployes().get(i).getFonction().equals("Administratif"))
                                 {
                                     menuItemLogin.setEnabled(false);
                                     menuItemLogout.setEnabled(true);
-                                    menuClients.setEnabled(true);
-                                    menuEmployes.setEnabled(false);
-                                    menuVoiture.setEnabled(true);
-                                    menuItemResetMotDePasse.setEnabled(true);
-                                    buttonAccorderReduction.setEnabled(true);
-                                    buttonChoisirModele.setEnabled(true);
-                                    buttonChoisirOption.setEnabled(true);
-                                    buttonSupprimerOption.setEnabled(true);
-                                    buttonNouveauProjet.setEnabled(true);
-                                    buttonOuvrirProjet.setEnabled(true);
-                                    buttonEnregistrerProjet.setEnabled(true);
-                                    // ajouter les boutons contrats.
-                                    radioButtonDiesel.setEnabled(true);
-                                    radioButtonElectrique.setEnabled(true);
-                                    radioButtonEssence.setEnabled(true);
-                                    radioButtonHybride.setEnabled(true);
-                                    Garage.getInstance().LoadProjetEnCoursSer();
-                                    afficheProjetEnCours();
-                                    File f = new File("Data" + File.separator + "GarageSerialized" + File.separator + "inumeros.data");
-                                    if(f.exists())
-                                        Garage.getInstance().LoadInumeros();
-                                }
-                                else // super admin
-                                {
-                                    menuItemLogin.setEnabled(false);
-                                    menuItemLogout.setEnabled(true);
-                                    menuClients.setEnabled(true);
+                                    menuClients.setEnabled(false);
                                     menuEmployes.setEnabled(true);
-                                    menuVoiture.setEnabled(true);
+                                    menuVoiture.setEnabled(false);
                                     menuItemResetMotDePasse.setEnabled(true);
-                                    buttonAccorderReduction.setEnabled(true);
-                                    buttonChoisirModele.setEnabled(true);
-                                    buttonChoisirOption.setEnabled(true);
-                                    buttonSupprimerOption.setEnabled(true);
-                                    buttonNouveauProjet.setEnabled(true);
-                                    buttonOuvrirProjet.setEnabled(true);
-                                    buttonEnregistrerProjet.setEnabled(true);
-                                    // ajouter les boutons contrats.
-                                    radioButtonDiesel.setEnabled(true);
-                                    radioButtonElectrique.setEnabled(true);
-                                    radioButtonEssence.setEnabled(true);
-                                    radioButtonHybride.setEnabled(true);
+                                    buttonAccorderReduction.setEnabled(false);
+                                    buttonChoisirModele.setEnabled(false);
+                                    buttonChoisirOption.setEnabled(false);
+                                    buttonSupprimerOption.setEnabled(false);
+                                    buttonNouveauProjet.setEnabled(false);
+                                    buttonOuvrirProjet.setEnabled(false);
+                                    buttonEnregistrerProjet.setEnabled(false);
+                                    nouveauContratButton.setEnabled(false);
+                                    supprimerContratButton.setEnabled(false);
+                                    visualiserVoitureButton.setEnabled(false);
+                                    radioButtonDiesel.setEnabled(false);
+                                    radioButtonElectrique.setEnabled(false);
+                                    radioButtonEssence.setEnabled(false);
+                                    radioButtonHybride.setEnabled(false);
+
                                 }
+                                else
+                                {
+                                    if(Garage.getInstance().getEmployes().get(i).getFonction().equals("Vendeur"))
+                                    {
+                                        menuItemLogin.setEnabled(false);
+                                        menuItemLogout.setEnabled(true);
+                                        menuClients.setEnabled(true);
+                                        menuEmployes.setEnabled(false);
+                                        menuVoiture.setEnabled(true);
+                                        menuItemResetMotDePasse.setEnabled(true);
+                                        buttonAccorderReduction.setEnabled(true);
+                                        buttonChoisirModele.setEnabled(true);
+                                        buttonChoisirOption.setEnabled(true);
+                                        buttonSupprimerOption.setEnabled(true);
+                                        buttonNouveauProjet.setEnabled(true);
+                                        buttonOuvrirProjet.setEnabled(true);
+                                        buttonEnregistrerProjet.setEnabled(true);
+                                        nouveauContratButton.setEnabled(true);
+                                        supprimerContratButton.setEnabled(true);
+                                        visualiserVoitureButton.setEnabled(true);
+                                        radioButtonDiesel.setEnabled(true);
+                                        radioButtonElectrique.setEnabled(true);
+                                        radioButtonEssence.setEnabled(true);
+                                        radioButtonHybride.setEnabled(true);
+                                    }
 
                             }
 
@@ -322,7 +375,9 @@ public class JFrameGarage extends JFrame
                     buttonNouveauProjet.setEnabled(false);
                     buttonOuvrirProjet.setEnabled(false);
                     buttonEnregistrerProjet.setEnabled(false);
-                    // ajouter les boutons contrats.
+                    buttonEnregistrerProjet.setEnabled(false);
+                    nouveauContratButton.setEnabled(false);
+                    supprimerContratButton.setEnabled(false);
                     radioButtonDiesel.setEnabled(false);
                     radioButtonElectrique.setEnabled(false);
                     radioButtonEssence.setEnabled(false);
@@ -357,7 +412,10 @@ public class JFrameGarage extends JFrame
                     buttonNouveauProjet.setEnabled(false);
                     buttonOuvrirProjet.setEnabled(false);
                     buttonEnregistrerProjet.setEnabled(false);
-                    // ajouter les boutons contrats.
+                    buttonEnregistrerProjet.setEnabled(false);
+                    nouveauContratButton.setEnabled(false);
+                    supprimerContratButton.setEnabled(false);
+                    visualiserVoitureButton.setEnabled(false);
                     radioButtonDiesel.setEnabled(false);
                     radioButtonElectrique.setEnabled(false);
                     radioButtonEssence.setEnabled(false);
@@ -383,11 +441,38 @@ public class JFrameGarage extends JFrame
                         dialogConfirmation.setVisible(true);
                         if(dialogConfirmation.isOk())
                         {
-                            for (int i = 0; i < Garage.getInstance().getEmployes().size(); i++)
+                            if(Garage.getInstance().getIdConnected() == 0)
                             {
-                                if (Garage.getInstance().getEmployes().get(i).getNumero() == Garage.getInstance().getIdConnected())
+                                // récupère les données dans Admin.properties
+                                FileReader reader= null;
+                                try {
+                                    reader = new FileReader("Admin.properties");
+                                } catch (FileNotFoundException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                                Properties p=new Properties();
+                                try {
+                                    p.load(reader);
+                                } catch (IOException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                                p.setProperty("Mdp",dialogResetMdp.getMdp());
+                                // enregistre le nouveau mdp
+                                try {
+                                    p.store(new FileWriter("Admin.properties"),"Enregistrement du super administrateur");
+                                } catch (IOException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+
+                            }
+                            else
+                            {
+                                for (int i = 0; i < Garage.getInstance().getEmployes().size(); i++)
                                 {
-                                    Garage.getInstance().getEmployes().get(i).setMdp(dialogResetMdp.getMdp());
+                                    if (Garage.getInstance().getEmployes().get(i).getNumero() == Garage.getInstance().getIdConnected())
+                                    {
+                                        Garage.getInstance().getEmployes().get(i).setMdp(dialogResetMdp.getMdp());
+                                    }
                                 }
                             }
                         }
@@ -477,39 +562,63 @@ public class JFrameGarage extends JFrame
                     int id = dialog.getId();
 
                     DefaultTableModel tableModel = (DefaultTableModel) tableClients.getModel();
-                    // parcour la Jtable
-                    for (int i = 0;i<tableModel.getRowCount();i++)
+                    AtomicBoolean aUnContrat = new AtomicBoolean(false);
+                    try
                     {
-                        if(tableModel.getValueAt(i,0).equals(id))
+                        Garage.getInstance().getContrats().forEach(c ->{ // cherche les employes qui ont un contrat
+                        if(c.getClientRef() == id)
                         {
-                            ok = true;
-                            JDialogConfirmation dialogConfirmation = new JDialogConfirmation("Voulez-vous vraiment supprimer ce client ?");
-                            dialogConfirmation.pack();
-                            dialogConfirmation.setLocationRelativeTo(null);
-                            dialogConfirmation.setVisible(true);
-                            if(dialogConfirmation.isOk())
+                            aUnContrat.set(true);
+                            throw new RuntimeException(); // permet de quitter la boucle
+                        }
+                        });
+                    }
+                    catch(Exception exc)
+                    {
+
+                    }
+                    if(!aUnContrat.get())
+                    {
+                        // parcour la Jtable
+                        for (int i = 0;i<tableModel.getRowCount();i++)
+                        {
+                            if(tableModel.getValueAt(i,0).equals(id))
                             {
-                                Garage.getInstance().getClients().remove(tableModel.getValueAt(i, 0));
-                                tableModel.removeRow(i);
-                                i = tableModel.getRowCount()+1; // met fin à la boucle
-                                dialogConfirmation.setVisible(false);
-                            }
-                            else
-                            {
-                                dialogConfirmation.setVisible(false);
+                                ok = true;
+                                JDialogConfirmation dialogConfirmation = new JDialogConfirmation("Voulez-vous vraiment supprimer ce client ?");
+                                dialogConfirmation.pack();
+                                dialogConfirmation.setLocationRelativeTo(null);
+                                dialogConfirmation.setVisible(true);
+                                if(dialogConfirmation.isOk())
+                                {
+                                    Garage.getInstance().getClients().remove(tableModel.getValueAt(i, 0));
+                                    tableModel.removeRow(i);
+                                    i = tableModel.getRowCount()+1; // met fin à la boucle
+                                    dialogConfirmation.setVisible(false);
+                                }
+                                else
+                                {
+                                    dialogConfirmation.setVisible(false);
+                                }
+
                             }
 
                         }
-
+                        if(!ok)
+                        {
+                            JDialogMessage dialogMessage = new JDialogMessage("L'id encodé n'existe pas !");
+                            dialogMessage.pack();
+                            dialogMessage.setLocationRelativeTo(null);
+                            dialogMessage.setVisible(true);
+                        }
                     }
-                    if(!ok)
+                    else
                     {
-                        JDialogMessage dialogMessage = new JDialogMessage("L'id encodé n'existe pas !");
+                        JDialogMessage dialogMessage = new JDialogMessage("Vous ne pouvez pas supprimer un client avec un contrat actif");
                         dialogMessage.pack();
                         dialogMessage.setLocationRelativeTo(null);
                         dialogMessage.setVisible(true);
                     }
-
                 }
             }
         });
@@ -519,24 +628,49 @@ public class JFrameGarage extends JFrame
             @Override
             public void actionPerformed(ActionEvent e) {
                 int index = tableClients.getSelectedRow();
+                AtomicBoolean aUnContrat = new AtomicBoolean(false);
                 if(tableClients.isRowSelected(index))
                 {
-                    JDialogConfirmation dialogConfirmation = new JDialogConfirmation("Êtes-vous sur de vouloir supprimer ce client ?");
-                    dialogConfirmation.pack();
-                    dialogConfirmation.setLocationRelativeTo(null);
-                    dialogConfirmation.setVisible(true);
-                    if(dialogConfirmation.isOk())
+                    try
                     {
-                        DefaultTableModel tableModel = (DefaultTableModel) tableClients.getModel();
-                        Garage.getInstance().getClients().remove(index);
-                        tableModel.removeRow(tableClients.getSelectedRow());
-                        dialogConfirmation.setVisible(false);
+                        Garage.getInstance().getContrats().forEach(c -> {
+                            if(c.getEmployeRef() == Garage.getInstance().getEmployes().get(index).getNumero())
+                            {
+                                aUnContrat.set(true);
+                                throw new RuntimeException(); // Remplace le break pour sortir de la boucle
+                            }
+                        });
+                    }
+                    catch(Exception exc)
+                    {
 
+                    }
+                    if(!aUnContrat.get())
+                    {
+                        JDialogConfirmation dialogConfirmation = new JDialogConfirmation("Êtes-vous sur de vouloir supprimer ce client ?");
+                        dialogConfirmation.pack();
+                        dialogConfirmation.setLocationRelativeTo(null);
+                        dialogConfirmation.setVisible(true);
+                        if(dialogConfirmation.isOk())
+                        {
+                            DefaultTableModel tableModel = (DefaultTableModel) tableClients.getModel();
+                            tableModel.removeRow(tableClients.getSelectedRow());
+                            Garage.getInstance().getClients().remove(index);
+                            dialogConfirmation.setVisible(false);
+                        }
+                        else
+                        {
+                            dialogConfirmation.setVisible(false);
+                        }
                     }
                     else
                     {
-                        dialogConfirmation.setVisible(false);
+                        JDialogMessage dialogMessage = new JDialogMessage("Vous ne pouvez pas supprimer un client avec un contrat actif");
+                        dialogMessage.pack();
+                        dialogMessage.setLocationRelativeTo(null);
+                        dialogMessage.setVisible(true);
                     }
+
                 }
                 else
                 {
@@ -558,9 +692,36 @@ public class JFrameGarage extends JFrame
                 dialog.setVisible(true);
                 if(dialog.isOk())
                 {
-                    Employe employe = new Employe(dialog.getNom(), dialog.getPrenom(), dialog.getLogin(), dialog.getMdp(), dialog.getFonction());
-                    Garage.getInstance().ajouteEmploye(employe);
-                    afficheEmployes();
+                    if(dialog.getLogin().equals("SUPERADMIN"))
+                    {
+                        JDialogMessage dialogMessage = new JDialogMessage("Ce login est réservé !");
+                        dialogMessage.pack();
+                        dialogMessage.setLocationRelativeTo(null);
+                        dialogMessage.setVisible(true);
+                    }
+                    else
+                    {
+                        boolean login = false;
+                        for(int i = 0;i<Garage.getInstance().getEmployes().size();i++)
+                        {
+                            if(Garage.getInstance().getEmployes().get(i).getLogin().equals(dialog.getLogin()))
+                            {
+                                JDialogMessage dialogMessage = new JDialogMessage("Ce login déjà utilisé !");
+                                dialogMessage.pack();
+                                dialogMessage.setLocationRelativeTo(null);
+                                dialogMessage.setVisible(true);
+                                login = true;
+                            }
+                        }
+                        if(login == false)
+                        {
+                            Employe employe = new Employe(dialog.getNom(), dialog.getPrenom(), dialog.getLogin(), dialog.getMdp(), dialog.getFonction());
+                            Garage.getInstance().ajouteEmploye(employe);
+                            afficheEmployes();
+                        }
+
+                    }
+
                 }
             }
         });
@@ -581,11 +742,11 @@ public class JFrameGarage extends JFrame
                     AtomicBoolean aUnContrat = new AtomicBoolean(false);
                     try
                     {
-                        Garage.getInstance().getContrats().forEach(c ->{
+                        Garage.getInstance().getContrats().forEach(c ->{ // cherche les employes qui ont un contrat
                             if(c.getEmployeRef() == id)
                             {
                                 aUnContrat.set(true);
-                                throw new RuntimeException();
+                                throw new RuntimeException(); // permet de quitter la boucle
                             }
                         });
                     }
@@ -627,6 +788,13 @@ public class JFrameGarage extends JFrame
                             dialogMessage.setLocationRelativeTo(null);
                             dialogMessage.setVisible(true);
                         }
+                    }
+                    else
+                    {
+                        JDialogMessage dialogMessage = new JDialogMessage("Vous ne pouvez pas supprimer un employé avec un contrat actif");
+                        dialogMessage.pack();
+                        dialogMessage.setLocationRelativeTo(null);
+                        dialogMessage.setVisible(true);
                     }
                 }
             }
