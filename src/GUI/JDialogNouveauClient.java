@@ -42,8 +42,30 @@ public class JDialogNouveauClient extends JDialog
                 nom = textFieldNom.getText();
                 prenom = textFieldPrenom.getText();
                 gsm = textFieldGsm.getText();
-                ok = true;
-                setVisible(false);
+                if(gsm.length() == 10)
+                {
+                    try
+                    {
+                        Integer.parseInt(gsm);
+                        ok = true;
+                        setVisible(false);
+                        dispose();
+                    }
+                    catch(NumberFormatException nfe)
+                    {
+                        JDialogMessage dialogMessage = new JDialogMessage("Veuillez entrer un numéro de gsm valide");
+                        dialogMessage.pack();
+                        dialogMessage.setLocationRelativeTo(null);
+                        dialogMessage.setVisible(true);
+                    }
+                }
+                else
+                {
+                    JDialogMessage dialogMessage = new JDialogMessage("Veuillez entrer un numéro de gsm valide");
+                    dialogMessage.pack();
+                    dialogMessage.setLocationRelativeTo(null);
+                    dialogMessage.setVisible(true);
+                }
             }
         });
 

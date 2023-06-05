@@ -1,5 +1,7 @@
 package Garage;
 
+import GUI.JDialogMessage;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
@@ -61,11 +63,18 @@ public class Voiture implements Serializable {
     {
         int i;
         for(i = 0; i < 5 && options[i] != null && options[i].getCode() != op.getCode(); i++);
-        if(options[i] == null && i < 5)
+        if(i < 5 && options[i] == null)
         {
             System.out.println("Option ajoutée à l'index : " + i);
             options[i] = op;
             return true;
+        }
+        else
+        {
+            JDialogMessage dialogMessage = new JDialogMessage("Vous ne pouvez pas avoir plus de 5 options");
+            dialogMessage.pack();
+            dialogMessage.setLocationRelativeTo(null);
+            dialogMessage.setVisible(true);
         }
         return false;
     }

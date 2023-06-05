@@ -10,12 +10,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.*;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class JFrameGarage extends JFrame
+public class JFrameGarage extends JFrame implements PropertyChangeListener
 {
     private JPanel mainPanel;
     private JButton nouveauContratButton;
@@ -50,9 +55,11 @@ public class JFrameGarage extends JFrame
 
     private JTable tableClients;
 
+    private JFrameGarage frameGarage = this;
+
     public JFrameGarage()
     {
-        setTitle("Application Garage JAVA");
+        setTitle("Application Garage JAVA" + " - " + getDate());
         setContentPane(mainPanel);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -115,6 +122,10 @@ public class JFrameGarage extends JFrame
         JMenuItem menuItemNouvelleOption = new JMenuItem("Nouvelle Option");
         menuVoiture.add(menuItemNouvelleOption);
 
+        JMenu menuParametres = new JMenu("Paramètres");
+        menuBar.add(menuParametres);
+        JMenuItem menuItemParametre = new JMenuItem("Paramètres de date");
+        menuParametres.add(menuItemParametre);
 
         addWindowListener(new WindowListener() {
 
@@ -224,7 +235,7 @@ public class JFrameGarage extends JFrame
         menuItemLogin.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JDialogLogin dialog = new JDialogLogin(null,true,"Entrée en session...");
+                JDialogLogin dialog = new JDialogLogin(null,true,"Entrée en session...", frameGarage);
                 dialog.setVisible(true);
 
                 if(dialog.isOk())
@@ -253,13 +264,12 @@ public class JFrameGarage extends JFrame
                             afficheProjetEnCours();
                             comboBoxOptionsDisponibles.setEnabled(true);
                             comboBoxModelesDisponibles.setEnabled(true);
-                            setTitle("Application Garage JAVA - "+dialog.getLogin());
+                            setTitle("Application Garage JAVA - "+dialog.getLogin() + " - " + getDate());
                             JDialogMessage dialogMessage = new JDialogMessage("Connexion réussie !");
                             dialogMessage.pack();
                             dialogMessage.setLocationRelativeTo(null);
                             dialogMessage.setVisible(true);
                             Garage.getInstance().setIdConnected(0);
-
                             menuItemLogin.setEnabled(false);
                             menuItemLogout.setEnabled(true);
                             menuClients.setEnabled(true);
@@ -295,7 +305,7 @@ public class JFrameGarage extends JFrame
                         {
                             if(Garage.getInstance().getEmployes().get(i).getLogin().equals(dialog.getLogin()) &&  Garage.getInstance().getEmployes().get(i).getMdp().equals(dialog.getMotDePasse()))
                             {
-                                setTitle("Application Garage JAVA - "+dialog.getLogin());
+                                setTitle("Application Garage JAVA - "+dialog.getLogin() + " - " + getDate());
                                 JDialogMessage dialogMessage = new JDialogMessage("Connexion réussie !");
                                 dialogMessage.pack();
                                 dialogMessage.setLocationRelativeTo(null);
@@ -390,7 +400,7 @@ public class JFrameGarage extends JFrame
 
                 if(dialog.isOk())
                 {
-                    setTitle("Application Garage JAVA");
+                    setTitle("Application Garage JAVA" + " - " + getDate());
                     Garage.getInstance().setIdConnected(-1);
                     menuItemLogin.setEnabled(true);
                     menuItemLogout.setEnabled(false);
@@ -1128,9 +1138,20 @@ public class JFrameGarage extends JFrame
                 }
             }
         });
+
+        menuItemParametre.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JDialogParametres dialogParametres = new JDialogParametres();
+                dialogParametres.pack();
+                dialogParametres.setLocationRelativeTo(null);
+                dialogParametres.setVisible(true);
+            }
+        });
     }
     private void afficheProjetEnCours()
     {
+
         Voiture v = Garage.getProjetEnCours();
         if(v.getModele() != null)
         {
@@ -1138,10 +1159,10 @@ public class JFrameGarage extends JFrame
             textFieldModele.setText(v.getModele().getNom());
             textFieldPrixDeBase.setText(String.valueOf(v.getModele().getPrixDeBase()));
             textFieldPuissance.setText(String.valueOf(v.getModele().getPuissance()));
-            if (v.getModele().getMoteur().equals("Essence")) radioButtonEssence.setSelected(true);
-            if (v.getModele().getMoteur().equals("Diesel")) radioButtonDiesel.setSelected(true);
-            if (v.getModele().getMoteur().equals("Electrique")) radioButtonElectrique.setSelected(true);
-            if (v.getModele().getMoteur().equals("Hybride")) radioButtonHybride.setSelected(true);
+            if (capitalize(v.getModele().getMoteur()).equals("Essence")) radioButtonEssence.setSelected(true);
+            if (capitalize(v.getModele().getMoteur()).equals("Diesel")) radioButtonDiesel.setSelected(true);
+            if (capitalize(v.getModele().getMoteur()).equals("Electrique")) radioButtonElectrique.setSelected(true);
+            if (capitalize(v.getModele().getMoteur()).equals("Hybride")) radioButtonHybride.setSelected(true);
             DefaultTableModel model = (DefaultTableModel) tableOptionsChoisies.getModel();
             ImageIcon icon = new ImageIcon("src" + File.separator + "GUI" + File.separator + "images" + File.separator + v.getModele().getImage());
             labelImage.setIcon(icon);
@@ -1199,7 +1220,15 @@ public class JFrameGarage extends JFrame
             ligne.add(Integer.valueOf(e.getNumero()));
             ligne.add(e.getNom());
             ligne.add(e.getPrenom());
-            ligne.add(e.getGsm());
+            String gsm = e.getGsm().substring(0, 4);
+            gsm += '/';
+            gsm += e.getGsm().substring(4, 6);
+            gsm += '.';
+            gsm += e.getGsm().substring(6, 8);
+            gsm += '.';
+            gsm += e.getGsm().substring(8, 10);
+            ligne.add(gsm);
+            ligne.add("");
             model.addRow(ligne);
         });
     }
@@ -1277,5 +1306,34 @@ public class JFrameGarage extends JFrame
         FlatDarculaLaf.setup();
         JFrameGarage frame = new JFrameGarage();
         frame.setVisible(true);
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        JDialogMessage dialogMessage = new JDialogMessage("Bienvenue " + evt.getNewValue() + " !");
+        dialogMessage.pack();
+        dialogMessage.setLocationRelativeTo(null);
+        dialogMessage.setVisible(true);
+    }
+
+    public String getDate()
+    {
+        FileReader reader= null;
+        try {
+            reader = new FileReader("Date.properties");
+        } catch (FileNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
+        Properties p=new Properties();
+        try {
+            p.load(reader);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        Locale locale = new Locale(p.getProperty("Langue"), p.getProperty("Pays"));
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
+        String date = dateFormat.format(new Date());
+
+        return date;
     }
 }

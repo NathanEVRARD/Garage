@@ -41,9 +41,50 @@ public class JDialogNouvelleOption extends JDialog
             public void actionPerformed(ActionEvent e) {
                 code = textFieldCode.getText();
                 intitule = textFieldIntitule.getText();
-                prix = Float.parseFloat(textFieldPrix.getText());
-                ok = true;
-                setVisible(false);
+
+                if(code.isEmpty() || intitule.isEmpty() || textFieldPrix.getText().isEmpty())
+                {
+                    JDialogMessage dialogMessage = new JDialogMessage("Veuillez remplir tous les champs");
+                    dialogMessage.pack();
+                    dialogMessage.setLocationRelativeTo(null);
+                    dialogMessage.setVisible(true);
+                }
+                else
+                {
+                    try
+                    {
+                        prix = Float.parseFloat(textFieldPrix.getText());
+                    }
+                    catch(NumberFormatException nfe)
+                    {
+                        JDialogMessage dialogMessage = new JDialogMessage("Le prix doit être valide");
+                        dialogMessage.pack();
+                        dialogMessage.setLocationRelativeTo(null);
+                        dialogMessage.setVisible(true);
+                    }
+                    if(code.length() == 4)
+                    {
+                        if(prix >= 0)
+                        {
+                            ok = true;
+                            setVisible(false);
+                        }
+                        else
+                        {
+                            JDialogMessage dialogMessage = new JDialogMessage("Le prix doit être positif");
+                            dialogMessage.pack();
+                            dialogMessage.setLocationRelativeTo(null);
+                            dialogMessage.setVisible(true);
+                        }
+                    }
+                    else
+                    {
+                        JDialogMessage dialogMessage = new JDialogMessage("Le code doit posséder 4 caractères");
+                        dialogMessage.pack();
+                        dialogMessage.setLocationRelativeTo(null);
+                        dialogMessage.setVisible(true);
+                    }
+                }
             }
         });
 

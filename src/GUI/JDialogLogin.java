@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class JDialogLogin extends JDialog
 {
@@ -17,7 +18,10 @@ public class JDialogLogin extends JDialog
     private String motDePasse;
     private boolean ok;
 
-    public JDialogLogin(JFrame parent,boolean modal,String titre)
+    BeanEmetteur be;
+    JFrameGarage br;
+
+    public JDialogLogin(JFrame parent,boolean modal,String titre, JFrameGarage frameGarage)
     {
         super(parent,modal);
         setTitle(titre);
@@ -26,8 +30,12 @@ public class JDialogLogin extends JDialog
         pack();
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((screen.width - this.getSize().width)/2,(screen.height - this.getSize().height)/2);
-
         ok = false;
+
+        be = new BeanEmetteur("login");
+        br = frameGarage;
+        be.addPropertyChangeListener(br);
+
         buttonOk.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -35,6 +43,7 @@ public class JDialogLogin extends JDialog
                 motDePasse = textFieldMotDePasse.getText();
                 ok = true;
                 setVisible(false);
+                be.setLogin(login);
             }
         });
         buttonAnnuler.addActionListener(new ActionListener() {
@@ -44,16 +53,6 @@ public class JDialogLogin extends JDialog
                 setVisible(false);
             }
         });
-    }
-    public static void main(String[] args) {
-        JDialogLogin dialogLogin = new JDialogLogin(null,true,"Entrée en session...");
-        dialogLogin.setVisible(true);
-        if (dialogLogin.isOk())
-        {
-            System.out.println("Login = " + dialogLogin.getLogin());
-            System.out.println("Mot de passe = " + dialogLogin.getMotDePasse());
-        }
-        dialogLogin.dispose();
     }
 
     public String getLogin() {
