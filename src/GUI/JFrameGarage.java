@@ -261,6 +261,7 @@ public class JFrameGarage extends JFrame implements PropertyChangeListener
                             afficheEmployes();
                             afficheClients();
                             afficheContrats();
+                            Garage.getInstance().LoadProjetEnCoursSer();
                             afficheProjetEnCours();
                             comboBoxOptionsDisponibles.setEnabled(true);
                             comboBoxModelesDisponibles.setEnabled(true);
@@ -362,18 +363,10 @@ public class JFrameGarage extends JFrame implements PropertyChangeListener
                                         radioButtonElectrique.setEnabled(true);
                                         radioButtonEssence.setEnabled(true);
                                         radioButtonHybride.setEnabled(true);
-                                        try
-                                        {
-                                            Garage.LoadProjetEnCours();
-                                        }
-                                        catch(Exception exc)
-                                        {
-                                            System.out.println(exc.getMessage());
-                                        }
+                                        Garage.getInstance().LoadProjetEnCoursSer();
+                                        afficheProjetEnCours();
                                     }
-
                             }
-
                             Garage.getInstance().setIdConnected(Garage.getInstance().getEmployes().get(i).getNumero());
                             i = Garage.getInstance().getEmployes().size();
                         }
