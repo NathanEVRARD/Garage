@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 public class JDialogLogin extends JDialog
 {
     private JTextField textFieldLogin;
-    private JTextField textFieldMotDePasse;
+    private JPasswordField textFieldMotDePasse;
     private JPanel mainPanel;
     private JButton buttonOk;
     private JButton buttonAnnuler;

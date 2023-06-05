@@ -3,11 +3,6 @@ package GUI;
 import Garage.*;
 import com.formdev.flatlaf.FlatDarculaLaf;
 
-/*import java.swing.*;
-import java.swing.table.DefaultTableModel;
-import java.swing.table.TableColumn;
-import java.swing.ButtonGroup;
-import java.swing.table.TableModel;*/
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -15,7 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.File;
+import java.io.*;
+import java.util.Properties;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -63,8 +59,9 @@ public class JFrameGarage extends JFrame
 
         //LECTURE CSV
 
-        loadModelesCSV();
-        loadOptionsCSV();
+
+        LoadModelesCSV();
+        LoadOptionsCSV();
         Garage.getInstance().LoadGarage();
         Garage.getInstance().LoadInumeros();
 
@@ -220,6 +217,8 @@ public class JFrameGarage extends JFrame
             radioButtonElectrique.setEnabled(false);
             radioButtonEssence.setEnabled(false);
             radioButtonHybride.setEnabled(false);
+            comboBoxOptionsDisponibles.setEnabled(false);
+            comboBoxModelesDisponibles.setEnabled(false);
         }
         //login
         menuItemLogin.addActionListener(new ActionListener() {
@@ -232,7 +231,6 @@ public class JFrameGarage extends JFrame
                 {
                     if(dialog.getLogin().equals("SUPERADMIN"))
                     {
-
                         // récupère les données dans Admin.properties
                         FileReader reader= null;
                         try {
@@ -249,6 +247,12 @@ public class JFrameGarage extends JFrame
 
                         if(p.getProperty("Mdp").equals(dialog.getMotDePasse()))
                         {
+                            afficheEmployes();
+                            afficheClients();
+                            afficheContrats();
+                            afficheProjetEnCours();
+                            comboBoxOptionsDisponibles.setEnabled(true);
+                            comboBoxModelesDisponibles.setEnabled(true);
                             setTitle("Application Garage JAVA - "+dialog.getLogin());
                             JDialogMessage dialogMessage = new JDialogMessage("Connexion réussie !");
                             dialogMessage.pack();
@@ -296,6 +300,9 @@ public class JFrameGarage extends JFrame
                                 dialogMessage.pack();
                                 dialogMessage.setLocationRelativeTo(null);
                                 dialogMessage.setVisible(true);
+                                afficheContrats();
+                                afficheClients();
+                                afficheEmployes();
                                 if(Garage.getInstance().getEmployes().get(i).getFonction().equals("Administratif"))
                                 {
                                     menuItemLogin.setEnabled(false);
@@ -318,12 +325,13 @@ public class JFrameGarage extends JFrame
                                     radioButtonElectrique.setEnabled(false);
                                     radioButtonEssence.setEnabled(false);
                                     radioButtonHybride.setEnabled(false);
-
                                 }
                                 else
                                 {
                                     if(Garage.getInstance().getEmployes().get(i).getFonction().equals("Vendeur"))
                                     {
+                                        comboBoxOptionsDisponibles.setEnabled(true);
+                                        comboBoxModelesDisponibles.setEnabled(true);
                                         menuItemLogin.setEnabled(false);
                                         menuItemLogout.setEnabled(true);
                                         menuClients.setEnabled(true);
@@ -344,6 +352,14 @@ public class JFrameGarage extends JFrame
                                         radioButtonElectrique.setEnabled(true);
                                         radioButtonEssence.setEnabled(true);
                                         radioButtonHybride.setEnabled(true);
+                                        try
+                                        {
+                                            Garage.LoadProjetEnCours();
+                                        }
+                                        catch(Exception exc)
+                                        {
+                                            System.out.println(exc.getMessage());
+                                        }
                                     }
 
                             }
@@ -360,31 +376,8 @@ public class JFrameGarage extends JFrame
                         dialogMessage.setVisible(true);
                     }
                 }
-                else
-                {
-                    menuItemLogin.setEnabled(true);
-                    menuItemLogout.setEnabled(false);
-                    menuClients.setEnabled(false);
-                    menuEmployes.setEnabled(false);
-                    menuVoiture.setEnabled(false);
-                    menuItemResetMotDePasse.setEnabled(false);
-                    buttonAccorderReduction.setEnabled(false);
-                    buttonChoisirModele.setEnabled(false);
-                    buttonChoisirOption.setEnabled(false);
-                    buttonSupprimerOption.setEnabled(false);
-                    buttonNouveauProjet.setEnabled(false);
-                    buttonOuvrirProjet.setEnabled(false);
-                    buttonEnregistrerProjet.setEnabled(false);
-                    buttonEnregistrerProjet.setEnabled(false);
-                    nouveauContratButton.setEnabled(false);
-                    supprimerContratButton.setEnabled(false);
-                    radioButtonDiesel.setEnabled(false);
-                    radioButtonElectrique.setEnabled(false);
-                    radioButtonEssence.setEnabled(false);
-                    radioButtonHybride.setEnabled(false);
-
-                }
             }
+        }
         });
         // logout
         menuItemLogout.addActionListener(new ActionListener() {
@@ -420,6 +413,8 @@ public class JFrameGarage extends JFrame
                     radioButtonElectrique.setEnabled(false);
                     radioButtonEssence.setEnabled(false);
                     radioButtonHybride.setEnabled(false);
+                    comboBoxOptionsDisponibles.setEnabled(false);
+                    comboBoxModelesDisponibles.setEnabled(false);
                 }
             }
         });
@@ -634,7 +629,7 @@ public class JFrameGarage extends JFrame
                     try
                     {
                         Garage.getInstance().getContrats().forEach(c -> {
-                            if(c.getEmployeRef() == Garage.getInstance().getEmployes().get(index).getNumero())
+                            if(c.getClientRef() == Garage.getInstance().getClients().get(index).getNumero())
                             {
                                 aUnContrat.set(true);
                                 throw new RuntimeException(); // Remplace le break pour sortir de la boucle
@@ -1134,7 +1129,6 @@ public class JFrameGarage extends JFrame
             }
         });
     }
-
     private void afficheProjetEnCours()
     {
         Voiture v = Garage.getProjetEnCours();
@@ -1238,7 +1232,7 @@ public class JFrameGarage extends JFrame
         });
     }
 
-    private void loadModelesCSV()
+    private void LoadModelesCSV()
     {
         try
         {
@@ -1254,7 +1248,7 @@ public class JFrameGarage extends JFrame
 
     }
 
-    private void loadOptionsCSV()
+    private void LoadOptionsCSV()
     {
         try
         {
